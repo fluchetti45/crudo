@@ -275,6 +275,7 @@ namespace crudo.Services
                     {
                         ShippingDatum newShippingData = new ShippingDatum
                         {
+                            UserId = userId,
                             FirstName = shippingData.FirstName,
                             LastName = shippingData.LastName,
                             City = shippingData.City,
