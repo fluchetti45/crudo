@@ -1,0 +1,116 @@
+<div class="container mt-5">
+  <h2 class="mb-4 text-center text-primary">Crear un Nuevo Producto</h2>
+  <p *ngIf="loading$ | async; else templateForm" class="text-center">
+    Cargando...
+  </p>
+
+  <ng-template #templateForm>
+    <form
+      id="productForm"
+      [formGroup]="productForm"
+      (submit)="onSubmit()"
+      class="shadow-lg p-4 rounded bg-light"
+    >
+      <div class="mb-3">
+        <label for="name" class="form-label">Nombre del Producto</label>
+        <input
+          type="text"
+          class="form-control form-control-lg"
+          id="name"
+          placeholder="Título del producto"
+          formControlName="name"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="price" class="form-label">Precio</label>
+        <input
+          type="number"
+          class="form-control form-control-lg"
+          id="price"
+          placeholder="Precio del producto"
+          formControlName="price"
+          step="0.01"
+          min="0"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="description" class="form-label">Descripción</label>
+        <div class="NgxEditor__Wrapper">
+          <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
+          <ngx-editor
+            [editor]="editor"
+            [placeholder]="'Escribe la descripción del producto...'"
+            formControlName="description"
+          ></ngx-editor>
+        </div>
+        <div
+          *ngIf="
+            productForm.get('description')?.invalid &&
+            productForm.get('description')?.touched
+          "
+          class="text-danger"
+        >
+          <small *ngIf="productForm.get('description')?.errors?.['required']"
+            >La descripción es requerida</small
+          >
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="stock" class="form-label">Stock</label>
+        <input
+          type="number"
+          class="form-control form-control-lg"
+          id="stock"
+          placeholder="Cantidad en stock"
+          formControlName="stock"
+          min="0"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="images" class="form-label">Imágenes</label>
+        <input
+          type="file"
+          class="form-control form-control-lg"
+          id="images"
+          multiple
+          (change)="onImageChange($event)"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="category" class="form-label">Categoría</label>
+        <select
+          class="form-select form-select-lg"
+          id="category"
+          formControlName="categoryId"
+          required
+        >
+          <option value="" disabled selected>Selecciona una categoría</option>
+          <option
+            *ngFor="let category of categories$ | async"
+            [value]="category.id"
+          >
+            {{ category.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="d-grid gap-2 mt-4">
+        <button
+          type="submit"
+          class="btn btn-primary btn-lg"
+          [disabled]="productForm.valid ? false : true"
+        >
+          Crear Producto
+        </button>
+      </div>
+    </form>
+  </ng-template>
+</div>

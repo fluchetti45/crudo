@@ -1,0 +1,7 @@
+<ng-container *ngIf="loading$ | async; else productsTemplate"> </ng-container>
+
+<ng-template #productsTemplate>
+  <ng-container *ngFor="let category of categories$ | async">
+    <app-category-detail [category]="category"></app-category-detail>
+  </ng-container>
+</ng-template>

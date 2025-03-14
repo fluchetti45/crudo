@@ -1,0 +1,17 @@
+<ng-container *ngIf="relatedProducts$ | async as relatedProducts">
+  <div class="container my-5" *ngIf="relatedProducts.length > 0">
+    <h3 class="text-center mb-4">
+      Relacionados en
+      <a [routerLink]="['/category', category.id]">{{ category.name }}</a>
+    </h3>
+    <ngx-slick-carousel
+      class="carousel"
+      #slickModal="slick-carousel"
+      [config]="slideConfig"
+    >
+      <div ngxSlickItem *ngFor="let product of relatedProducts" class="slide">
+        <app-related-product [product]="product"></app-related-product>
+      </div>
+    </ngx-slick-carousel>
+  </div>
+</ng-container>

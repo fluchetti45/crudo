@@ -1,0 +1,54 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Tu Carrito de Compras</h2>
+
+  <ng-container *ngIf="loading$ | async; else loadedContent">
+    <div class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2">Cargando tu carrito...</p>
+    </div>
+  </ng-container>
+
+  <ng-template #loadedContent>
+    <div class="row">
+      <div class="col-md-8">
+        <ng-container *ngIf="(items$ | async)?.length; else emptyCart">
+          <app-cart-item
+            *ngFor="let item of items$ | async"
+            [item]="item"
+            class="mb-3"
+          ></app-cart-item>
+        </ng-container>
+        <ng-template #emptyCart>
+          <div class="alert alert-info">
+            Tu carrito está vacío. ¡Agrega algunos productos!
+          </div>
+        </ng-template>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Resumen de compra</h4>
+            <ng-container *ngIf="(items$ | async)?.length; else noItems">
+              <p class="card-text">
+                Total de artículos: {{ (items$ | async)?.length }}
+              </p>
+              <hr />
+              <p>Total: {{ this.total$ | async | currency }}</p>
+              <button
+                class="btn btn-primary btn-block mt-3"
+                (click)="onCheckout()"
+              >
+                Proceder al pago
+              </button>
+            </ng-container>
+            <ng-template #noItems>
+              <p class="card-text">No hay artículos en el carrito.</p>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>

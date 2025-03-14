@@ -1,0 +1,16 @@
+<div class="form-group w-25">
+  <select
+    id="filterSelect"
+    class="form-select"
+    [(ngModel)]="selectedFilter"
+    (change)="onFilterChange()"
+  >
+    <!-- Placeholder opcional -->
+    <option value="" disabled selected>Selecciona un filtro</option>
+
+    <option value="priceAsc">Precio: menor a mayor</option>
+    <option value="priceDesc">Precio: mayor a menor</option>
+    <option value="newest">Más nuevo a más viejo</option>
+    <option value="oldest">Más viejo a más nuevo</option>
+  </select>
+</div>

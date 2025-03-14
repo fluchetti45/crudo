@@ -1,0 +1,10 @@
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Esto es crucial para el sticky footer */
+  }
+  
+  .main-content {
+    flex: 1 0 auto; /* Esto hace que el contenido principal ocupe todo el espacio disponible */
+    padding-bottom: 2rem; /* Espacio entre el contenido y el footer */
+  }

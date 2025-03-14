@@ -1,0 +1,30 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Mis Órdenes</h2>
+
+  <ng-container *ngIf="loading$; else ordersContent">
+    <div class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando órdenes...</span>
+      </div>
+      <p class="mt-2">Cargando tus órdenes...</p>
+    </div>
+  </ng-container>
+
+  <ng-template #ordersContent>
+    <ng-container *ngIf="orders$?.length; else noOrders">
+      <div class="list-group">
+        <app-order
+          *ngFor="let order of orders$"
+          [order]="order"
+          class="mb-3"
+        ></app-order>
+      </div>
+    </ng-container>
+
+    <ng-template #noOrders>
+      <div class="alert alert-info">
+        No tienes órdenes aún. ¡Empieza a comprar!
+      </div>
+    </ng-template>
+  </ng-template>
+</div>

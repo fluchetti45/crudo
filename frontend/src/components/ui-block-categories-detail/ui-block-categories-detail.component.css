@@ -1,0 +1,6 @@
+.btn-group .btn {
+    margin-right: 0.25rem;
+  }
+  .btn-group .btn:last-child {
+    margin-right: 0;
+  }

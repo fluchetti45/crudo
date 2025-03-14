@@ -1,0 +1,30 @@
+<div class="container">
+  <div
+    class="spinner-border"
+    role="status"
+    *ngIf="loading$ | async; else productsTemplate"
+  >
+    <span class="sr-only"></span>
+  </div>
+</div>
+
+<ng-template #productsTemplate>
+  <ng-container *ngIf="!(error$ | async); else errorTemplate">
+    <p>
+      <a routerLink="/">Inicio</a> /
+      <a routerLink="/categories">Categorias</a> /
+      {{ (category$ | async)?.name }}
+    </p>
+    <h3 class="text-center">
+      Productos de la categoria : {{ (category$ | async)?.name }}
+    </h3>
+    <app-filter></app-filter>
+    <app-ui-blocks-products-category></app-ui-blocks-products-category>
+  </ng-container>
+</ng-template>
+
+<ng-template #errorTemplate>
+  <div class="container">
+    <h3 class="text-danger text-center">{{ error$ | async }}</h3>
+  </div>
+</ng-template>

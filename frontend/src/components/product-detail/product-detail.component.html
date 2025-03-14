@@ -1,0 +1,118 @@
+<div class="container py-5">
+  <div class="row">
+    <div class="col-lg-6 mb-4 mb-lg-0">
+      <div class="card border-0 shadow">
+        <!-- Contenedor con Flexbox para alinear las miniaturas a la izquierda de la imagen principal -->
+        <div class="image-container">
+          <img
+            [src]="selectedImage.filePath"
+            class="card-img-top main-image"
+            alt="{{ product.name }}"
+            (click)="openModal()"
+          />
+          <div class="thumbnail-container-wrapper">
+            <!-- Miniaturas de las imágenes alineadas a la izquierda -->
+            <div
+              *ngFor="let image of product.productImages"
+              class="thumbnail-container"
+              (click)="changeMainImage(image)"
+            >
+              <img
+                [src]="image.filePath"
+                class="thumbnail-img"
+                [class.selected]="selectedImage === image"
+                alt="{{ product.name }} thumbnail"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <p>
+        <a routerLink="/">Inicio</a> /
+        <a [routerLink]="['/category', product.categoryId]">{{
+          product.category.name
+        }}</a>
+        /
+        {{ product.name }}
+      </p>
+      <h2 class="mb-4">{{ product.name }}</h2>
+      <p class="mb-4" [innerHTML]="getSafeDescription()"></p>
+
+      <h3 class="text-primary mb-4">
+        {{ product.price.toFixed(2) | currency }}
+      </h3>
+
+      <div *ngIf="isAdmin$ | async" class="d-flex justify-content-between mb-4">
+        <div class="d-flex justify-content-between mb-4">
+          <button class="btn btn-outline-danger" (click)="onDelete()">
+            <i class="bi bi-trash"></i> Eliminar
+          </button>
+          <button class="btn btn-outline-secondary" (click)="onEdit()">
+            <i class="bi bi-pencil"></i> Editar
+          </button>
+        </div>
+      </div>
+
+      <div class="card bg-light">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Agregar al carrito</h5>
+          <div class="input-group mb-3">
+            <input
+              type="number"
+              class="form-control"
+              placeholder="Cantidad"
+              aria-label="Cantidad"
+              #quantityInput
+              min="1"
+              [max]="product.stock"
+              [disabled]="product.stock === 0"
+            />
+            <button
+              class="btn btn-primary"
+              type="button"
+              (click)="addToCart(product.id, quantityInput.value)"
+              [disabled]="product.stock === 0"
+            >
+              <i class="bi bi-cart-plus"></i>
+              {{ product.stock === 0 ? "Agotado" : "Agregar" }}
+            </button>
+          </div>
+          <small class="text-danger" *ngIf="product.stock === 0">
+            Este producto está agotado
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para ver la imagen en detalle -->
+<div
+  class="modal"
+  tabindex="-1"
+  [ngClass]="{ show: modalOpen }"
+  (click)="closeModal()"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" (click)="closeModal()">
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <img
+          [src]="selectedImage.filePath"
+          class="img-fluid modal-image"
+          alt="{{ product.name }}"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-related-products [productId]="product.id" [category]="product.category">
+</app-related-products>

@@ -1,0 +1,89 @@
+<footer class="bg-light text-dark pt-5 pb-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+        <h5 class="text-uppercase mb-4">CRUDO</h5>
+        <p>Tu tienda de confianza para productos de calidad.</p>
+        <ul class="list-inline">
+          <li class="list-inline-item">
+            <a
+              href="https://www.instagram.com/fauluchetti/"
+              class="text-dark h4"
+              target="_blank"
+              ><i class="bi bi-instagram"></i
+            ></a>
+          </li>
+          <li class="list-inline-item">
+            <a
+              href="https://github.com/fluchetti45"
+              target="_blank"
+              class="text-dark h4"
+              ><i class="bi bi-github"></i
+            ></a>
+          </li>
+          <li class="list-inline-item">
+            <app-whatsapp-button></app-whatsapp-button>
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+        <h5 class="text-uppercase mb-4">Enlaces Rápidos</h5>
+        <ul class="list-unstyled">
+          <li><a routerLink="/about" class="text-dark">Sobre Nosotros</a></li>
+          <li><a routerLink="/products" class="text-dark">Productos</a></li>
+          <li><a routerLink="/categories" class="text-dark">Categorías</a></li>
+          <li><a routerLink="/contact" class="text-dark">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+        <h5 class="text-uppercase mb-4">Ayuda</h5>
+        <ul class="list-unstyled">
+          <li>
+            <a routerLink="/faq" class="text-dark">Preguntas Frecuentes</a>
+          </li>
+          <li><a routerLink="/shipping" class="text-dark">Envíos</a></li>
+          <li><a routerLink="/returns" class="text-dark">Devoluciones</a></li>
+          <li>
+            <a routerLink="/privacy" class="text-dark"
+              >Política de Privacidad</a
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+        <h5 class="text-uppercase mb-4">Boletín</h5>
+        <p>Suscríbete para recibir nuestras últimas ofertas</p>
+        <form (ngSubmit)="onSubmit()" class="form-inline">
+          <div class="input-group mb-2">
+            <input
+              type="email"
+              class="form-control"
+              placeholder="Ingresa tu email"
+              [(ngModel)]="email"
+              name="email"
+              required
+            />
+            <button class="btn btn-primary" type="submit">Suscribir</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <hr class="my-4" />
+    <div class="row align-items-center">
+      <div class="col-md-7 col-lg-8">
+        <p>© 2025 CRUDO. Todos los derechos reservados.</p>
+      </div>
+      <div class="col-md-5 col-lg-4">
+        <ul class="list-inline text-md-end mb-0">
+          <li class="list-inline-item">
+            <a routerLink="/terms" class="text-dark">Términos de Uso</a>
+          </li>
+          <li class="list-inline-item">·</li>
+          <li class="list-inline-item">
+            <a routerLink="/privacy" class="text-dark">Privacidad</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>

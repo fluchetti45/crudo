@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+  # Database
+  db:
+    container_name: db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${DB_SA_PASSWORD}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+    networks:
+      - ecommerce-net
+
+  # Backend
+  backend:
+    build:
+      context: ./backend/crudo
+      dockerfile: Dockerfile
+    ports:
+      - "5075:5075"
+    environment:
+      - ASPNETCORE_URLS=http://+:5075
+      - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING}
+      - Mailchimp__ApiKey=${MAILCHIMP_API_KEY}
+      - Mailchimp__ListId=${MAILCHIMP_LIST_ID}
+      - Mailgun__ApiKey=${MAILGUN_API_KEY}
+      - Mailgun__Domain=${MAILGUN_DOMAIN}
+      - Cloudinary__CloudName=${CLOUDINARY_CLOUD_NAME}
+      - Cloudinary__ApiKey=${CLOUDINARY_API_KEY}
+      - Cloudinary__ApiSecret=${CLOUDINARY_API_SECRET}
+      - Auth0__Domain=${AUTH0_DOMAIN}
+      - Auth0__Audience=${AUTH0_AUDIENCE}
+    depends_on:
+      - db
+    networks:
+      - ecommerce-net
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - ecommerce-net
+
+networks:
+  ecommerce-net:
+    driver: bridge
+
+volumes:
+  sqldata:

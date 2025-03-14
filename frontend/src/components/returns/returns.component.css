@@ -1,0 +1,371 @@
+/* Estilos generales */
+.returns-page {
+  color: #333;
+}
+
+.section-title {
+  position: relative;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background-color: var(--bs-primary);
+}
+
+.scroll-section {
+  scroll-margin-top: 80px;
+}
+
+/* Hero section */
+.returns-hero {
+  background: linear-gradient(135deg, var(--bs-primary) 0%, #0056b3 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.returns-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"%3E%3Cpath fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,208C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"%3E%3C/path%3E%3C/svg%3E');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.2;
+}
+
+/* Proceso de devolución */
+.process-step {
+  text-align: center;
+  padding: 20px;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.process-step:hover {
+  transform: translateY(-5px);
+}
+
+.process-icon {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: rgba(var(--bs-primary-rgb), 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  position: relative;
+}
+
+.process-icon i {
+  font-size: 2.5rem;
+  color: var(--bs-primary);
+}
+
+.process-number {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--bs-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Timeline */
+.timeline {
+  position: relative;
+  padding-left: 30px;
+  list-style: none;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 9px;
+  width: 2px;
+  background-color: var(--bs-primary);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -30px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--bs-primary);
+  border: 3px solid white;
+  box-shadow: 0 0 0 2px var(--bs-primary);
+}
+
+.timeline-content {
+  padding-bottom: 10px;
+}
+
+/* Condiciones */
+.condition-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.condition-item {
+  display: flex;
+  align-items: center;
+}
+
+.condition-icon {
+  margin-right: 15px;
+  font-size: 1.5rem;
+}
+
+/* Accordion */
+.custom-accordion .accordion-button {
+  padding: 1.25rem;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.custom-accordion .accordion-button:not(.collapsed) {
+  color: var(--bs-primary);
+  background-color: rgba(var(--bs-primary-rgb), 0.05);
+}
+
+.custom-accordion .accordion-button:focus {
+  box-shadow: none;
+  border-color: rgba(var(--bs-primary-rgb), 0.5);
+}
+
+.custom-accordion .accordion-body {
+  padding: 1.25rem;
+  background-color: #f8f9fa;
+}
+
+/* Contacto */
+.contact-option {
+  padding: 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background-color: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.contact-option:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.contact-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-size: 2rem;
+}
+
+.contact-icon i {
+  font-size: 2rem;
+}
+
+.contact-option:nth-child(1) .contact-icon {
+  background-color: rgba(var(--bs-primary-rgb), 0.1);
+  color: var(--bs-primary);
+}
+
+.contact-option:nth-child(2) .contact-icon {
+  background-color: rgba(var(--bs-success-rgb), 0.1);
+  color: var(--bs-success);
+}
+
+.contact-option:nth-child(3) .contact-icon {
+  background-color: rgba(var(--bs-info-rgb), 0.1);
+  color: var(--bs-info);
+}
+
+/* Responsive */
+@media (max-width: 767.98px) {
+  .process-step {
+    margin-bottom: 30px;
+  }
+
+  .contact-option {
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .returns-hero {
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+  }
+
+  .process-icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .process-icon i {
+    font-size: 2rem;
+  }
+}
+
+/* Mejoras adicionales */
+
+/* Efecto de tarjeta con borde al hacer hover */
+.card {
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.card:hover {
+  border-color: var(--bs-primary);
+  transform: translateY(-3px);
+}
+
+/* Animación para los iconos */
+.process-icon i,
+.contact-icon i {
+  transition: transform 0.3s ease;
+}
+
+.process-step:hover .process-icon i,
+.contact-option:hover .contact-icon i {
+  transform: scale(1.2);
+}
+
+/* Mejora para el acordeón */
+.custom-accordion .accordion-button::after {
+  background-color: rgba(var(--bs-primary-rgb), 0.1);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  background-position: center;
+  transition: all 0.3s ease;
+}
+
+.custom-accordion .accordion-button:not(.collapsed)::after {
+  transform: rotate(-180deg) scale(1.2);
+}
+
+/* Efecto de resaltado para la línea de tiempo */
+.timeline-item:hover .timeline-marker {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 4px rgba(var(--bs-primary-rgb), 0.3);
+}
+
+.timeline-item:hover .timeline-content h5 {
+  color: var(--bs-primary);
+}
+
+/* Mejora para dispositivos móviles */
+@media (max-width: 767.98px) {
+  .returns-hero {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .returns-hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+
+  .section-title::after {
+    width: 60px;
+  }
+}
+
+/* Efecto de impresión */
+@media print {
+  .returns-hero {
+    background: none !important;
+    color: #000 !important;
+  }
+
+  .returns-hero::before {
+    display: none;
+  }
+
+  .btn {
+    display: none;
+  }
+
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+
+  .section-title::after {
+    background-color: #000;
+  }
+}
+
+/* Mejora de accesibilidad */
+.btn:focus,
+.accordion-button:focus {
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+  outline: 2px solid transparent;
+}
+
+/* Modo oscuro (opcional) */
+@media (prefers-color-scheme: dark) {
+  .returns-page.dark-mode {
+    color: #f8f9fa;
+    background-color: #212529;
+  }
+
+  .returns-page.dark-mode .card {
+    background-color: #343a40;
+    border-color: #495057;
+  }
+
+  .returns-page.dark-mode .text-muted {
+    color: #adb5bd !important;
+  }
+
+  .returns-page.dark-mode .bg-light {
+    background-color: #343a40 !important;
+  }
+
+  .returns-page.dark-mode .timeline::before {
+    background-color: #6c757d;
+  }
+
+  .returns-page.dark-mode .custom-accordion .accordion-body {
+    background-color: #2b3035;
+  }
+}
+

@@ -1,0 +1,50 @@
+<div class="cart-item card mb-3">
+  <div class="card-body">
+    <div class="row align-items-center">
+      <div class="col-md-2 col-4">
+        <img
+          [src]="item.imageUrl"
+          class="img-fluid rounded"
+          [alt]="'Producto ' + item.productId"
+        />
+      </div>
+      <div class="col-md-3 col-8">
+        <h6 class="mb-0">{{ item.productName }}</h6>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="d-flex align-items-center">
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="decreaseQuantity()"
+          >
+            -
+          </button>
+          <span class="mx-2">{{ item.quantity }}</span>
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="increaseQuantity()"
+          >
+            +
+          </button>
+        </div>
+      </div>
+      <div class="col-md-2 col-6">
+        <p class="mb-0 text-muted">
+          Precio:
+          <span class="font-weight-bold">{{ item.price | currency }}</span>
+        </p>
+      </div>
+      <div class="col-md-2 col-12 mt-2 mt-md-0">
+        <p class="mb-2 text-success">
+          Total:
+          <span class="font-weight-bold">{{
+            item.quantity * item.price | currency
+          }}</span>
+        </p>
+        <button class="btn btn-sm btn-danger" (click)="removeItem()">
+          Quitar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

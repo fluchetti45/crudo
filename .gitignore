@@ -1,0 +1,35 @@
+# 🔹 Archivos de Angular (frontend)
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.angular-cache/
+frontend/.vscode/
+frontend/.eslintcache
+frontend/package-lock.json
+frontend/yarn.lock
+frontend/.idea/
+
+# 🔹 Archivos de .NET (backend)
+backend/crudo/bin/
+backend/crudo/obj/
+backend/crudo/.vs/
+backend/crudo/.vscode/
+backend/crudo/*.user
+backend/crudo/*.suo
+backend/crudo/*.cache
+backend/crudo/*.log
+backend/crudo/*.pdb
+backend/crudo/*.db
+backend/crudo/*.sqlite
+backend/crudo/Migrations/
+
+
+# 🔹 General (Windows, Mac, Linux)
+*.DS_Store
+*.log
+Thumbs.db
+
+# Environment variables and sensitive config
+.env
+backend/crudo/appsettings.Development.json
+backend/crudo/appsettings.Production.json

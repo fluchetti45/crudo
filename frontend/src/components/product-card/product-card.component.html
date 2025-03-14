@@ -1,0 +1,19 @@
+<div
+  class="card h-100 shadow-sm product-card"
+  (click)="onClick()"
+  [ngClass]="{ 'out-of-stock': product.stock === 0 }"
+>
+  <div class="product-image-container">
+    <img
+      [src]="product.filePathCover"
+      [alt]="product.name"
+      class="product-image"
+    />
+  </div>
+  <div class="card-body text-center d-flex flex-column">
+    <h5 class="card-title">{{ product.name }}</h5>
+    <p class="card-text description" [innerHTML]="getSafeDescription()"></p>
+    <p class="card-text price">{{ product.price | currency }}</p>
+    <p class="stock-status" *ngIf="product.stock === 0">Agotado</p>
+  </div>
+</div>

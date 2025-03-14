@@ -1,0 +1,80 @@
+<div class="container mt-4">
+  <h2>Estado de ordenes</h2>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let status of statuses$">
+          <td>{{ status.id }}</td>
+          <td>
+            <a>{{ status.name }}</a>
+          </td>
+          <td>
+            <div class="btn-group" role="group">
+              <button
+                class="btn btn-sm btn-outline-primary mx-2"
+                (click)="editStatus(status)"
+              >
+                <i class="bi bi-pencil"></i> Editar
+              </button>
+
+              <button
+                class="btn btn-sm btn-outline-danger"
+                (click)="deleteStatus(status.id)"
+              >
+                <i class="bi bi-trash"></i> Eliminar
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card mt-4">
+    <div class="card-header">
+      <h3>
+        {{
+          isEditing ? "Editar estado de orden" : "Crear nuevo estado de orden"
+        }}
+      </h3>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="statusForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="name" class="form-label">Nombre</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            formControlName="name"
+            required
+          />
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <button
+            type="submit"
+            class="btn btn-primary me-2"
+            [disabled]="statusForm.invalid"
+          >
+            {{ isEditing ? "Actualizar" : "Crear" }}
+          </button>
+          <button
+            *ngIf="isEditing"
+            type="button"
+            class="btn btn-secondary"
+            (click)="cancelEdit()"
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

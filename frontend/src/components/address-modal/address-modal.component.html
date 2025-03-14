@@ -1,0 +1,162 @@
+<div class="modal-backdrop fade show"></div>
+<div class="modal d-block fade show" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar dirección</h5>
+        <button type="button" class="btn-close" (click)="onCancel()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="addressForm">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="firstName" class="form-label">Nombre</label>
+              <input
+                type="text"
+                class="form-control"
+                id="firstName"
+                formControlName="firstName"
+              />
+              <div
+                *ngIf="
+                  addressForm.get('firstName')?.invalid &&
+                  addressForm.get('firstName')?.touched
+                "
+                class="text-danger small"
+              >
+                Nombre es requerido
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="lastName" class="form-label">Apellido</label>
+              <input
+                type="text"
+                class="form-control"
+                id="lastName"
+                formControlName="lastName"
+              />
+              <div
+                *ngIf="
+                  addressForm.get('lastName')?.invalid &&
+                  addressForm.get('lastName')?.touched
+                "
+                class="text-danger small"
+              >
+                Apellido es requerido
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              formControlName="email"
+            />
+            <div
+              *ngIf="
+                addressForm.get('email')?.invalid &&
+                addressForm.get('email')?.touched
+              "
+              class="text-danger small"
+            >
+              Email válido es requerido
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="address" class="form-label">Dirección</label>
+            <input
+              type="text"
+              class="form-control"
+              id="address"
+              formControlName="address"
+            />
+            <div
+              *ngIf="
+                addressForm.get('address')?.invalid &&
+                addressForm.get('address')?.touched
+              "
+              class="text-danger small"
+            >
+              Dirección es requerida
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="city" class="form-label">Ciudad</label>
+              <input
+                type="text"
+                class="form-control"
+                id="city"
+                formControlName="city"
+              />
+              <div
+                *ngIf="
+                  addressForm.get('city')?.invalid &&
+                  addressForm.get('city')?.touched
+                "
+                class="text-danger small"
+              >
+                Ciudad es requerida
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="postalCode" class="form-label">Código Postal</label>
+              <input
+                type="text"
+                class="form-control"
+                id="postalCode"
+                formControlName="postalCode"
+              />
+              <div
+                *ngIf="
+                  addressForm.get('postalCode')?.invalid &&
+                  addressForm.get('postalCode')?.touched
+                "
+                class="text-danger small"
+              >
+                Código postal es requerido
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="country" class="form-label">País</label>
+            <input
+              type="text"
+              class="form-control"
+              id="country"
+              formControlName="country"
+            />
+            <div
+              *ngIf="
+                addressForm.get('country')?.invalid &&
+                addressForm.get('country')?.touched
+              "
+              class="text-danger small"
+            >
+              País es requerido
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="addressForm.invalid"
+          (click)="onSave()"
+        >
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

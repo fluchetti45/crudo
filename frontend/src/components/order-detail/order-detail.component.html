@@ -1,0 +1,113 @@
+<div class="container mt-4">
+  <ng-container *ngIf="loading; else orderContent">
+    <div class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando detalles de la orden...</span>
+      </div>
+      <p class="mt-2">Cargando detalles de la orden...</p>
+    </div>
+  </ng-container>
+
+  <ng-template #orderContent>
+    <ng-container *ngIf="order">
+      <h2 class="mb-4">Detalles de la Orden #{{ order.data.id }}</h2>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Información General</h5>
+          <p class="card-text">
+            <strong>Fecha:</strong> {{ order.data.createdAt | date : "medium" }}
+          </p>
+          <p class="card-text">
+            <strong>Estado:</strong>
+            <span class="badge" [ngClass]="getStatusClass(order.data.status)">{{
+              order.data.status
+            }}</span>
+          </p>
+          <p class="card-text">
+            <strong>Total:</strong> {{ order.data.total | currency }}
+          </p>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Artículos</h5>
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio Unitario</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of order.data.items">
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <img
+                        [src]="item.productImage"
+                        [alt]="item.productName"
+                        class="product-thumbnail me-2"
+                      />
+                      <span>{{ item.productName }}</span>
+                    </div>
+                  </td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ item.price | currency }}</td>
+                  <td>{{ item.quantity * item.price | currency }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Datos comprador</h5>
+          <p class="card-text">{{ order.data.shippingData.firstName }}</p>
+          <p class="card-text">
+            {{ order.data.shippingData.lastName }}
+          </p>
+          <p class="card-text">{{ order.data.shippingData.email }}</p>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Dirección de Envío</h5>
+          <p class="card-text">{{ order.data.shippingData.address }}</p>
+          <p class="card-text">
+            {{ order.data.shippingData.city }}
+            {{ order.data.shippingData.postalCode }}
+          </p>
+          <p class="card-text">{{ order.data.shippingData.country }}</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Resumen de Pago</h5>
+          <p class="card-text">
+            <strong>Subtotal:</strong> {{ order.data.total | currency }}
+          </p>
+          <p class="card-text"><strong>Impuestos:</strong>0</p>
+          <p class="card-text"><strong>Envío:</strong>0</p>
+          <p class="card-text">
+            <strong>Total:</strong> {{ order.data.total | currency }}
+          </p>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container>
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <a class="btn btn-primary" routerLink="/orders">Volver</a>
+        <a class="btn btn-primary" routerLink="/contact">Reclamar</a>
+      </div>
+    </ng-container>
+  </ng-template>
+</div>

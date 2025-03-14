@@ -1,0 +1,27 @@
+<div class="container mt-4">
+  <ng-container *ngIf="products$ | async as products; else loading">
+    <div
+      class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
+      *ngIf="products.length > 0; else noProducts"
+    >
+      <div class="col" *ngFor="let product of products">
+        <app-product-card [product]="product"></app-product-card>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #loading>
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #noProducts>
+    <div class="alert alert-info text-center">
+      <i class="bi bi-inbox me-2"></i>
+      No hay productos disponibles.
+    </div>
+  </ng-template>
+</div>

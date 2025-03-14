@@ -1,0 +1,91 @@
+<div class="container py-5">
+  <ng-container *ngIf="isAuthenticated$ | async; else loggedOut">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-body">
+            <div class="text-center mb-4">
+              <img
+                [src]="(user$ | async)?.picture"
+                class="rounded-circle mb-3"
+                width="100"
+                alt="Profile picture"
+                *ngIf="(user$ | async)?.picture"
+              />
+              <h3>{{ (user$ | async)?.name }}</h3>
+              <p class="text-muted">{{ (user$ | async)?.email }}</p>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button class="btn btn-danger" (click)="logout()">
+                Cerrar Sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <div *ngIf="shippingData.length > 0; else noAddresses">
+    <div class="container mt-4">
+      <h2>Mis Direcciones de Envío</h2>
+
+      <div class="list-group">
+        <div
+          *ngFor="let address of shippingData"
+          class="list-group-item list-group-item-action d-flex align-items-center justify-content-between"
+        >
+          <div>
+            <h6 class="mb-0">{{ address.firstName }} {{ address.lastName }}</h6>
+            <p class="mb-0 small text-muted">
+              {{ address.address }}, {{ address.city }}, {{ address.country }}
+              {{ address.postalCode }}
+            </p>
+            <small class="text-muted">{{ address.email }}</small>
+          </div>
+          <div class="btn-group">
+            <!-- Botón de editar -->
+            <button
+              class="btn btn-outline-primary btn-sm mx-2"
+              (click)="editAddress(address)"
+            >
+              <i class="bi bi-pencil-fill"></i> Editar
+            </button>
+            <!-- Botón de eliminar -->
+            <button
+              class="btn btn-outline-danger btn-sm"
+              (click)="deleteAddress(address.id!)"
+            >
+              <i class="bi bi-trash-fill"></i> Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Component -->
+      <app-address-modal
+        *ngIf="showModal"
+        [address]="selectedAddress!"
+        (save)="saveAddress($event)"
+        (cancel)="cancelEdit()"
+      >
+      </app-address-modal>
+    </div>
+  </div>
+  <ng-template #noAddresses>
+    <p>No tienes direcciones de envío guardadas.</p>
+  </ng-template>
+  <button class="btn btn-primary mt-3" [routerLink]="['/add-shipping-address']">
+    <i class="bi bi-plus-circle"></i> Agregar Nueva Dirección
+  </button>
+</div>
+
+<ng-template #loggedOut>
+  <div class="text-center py-5">
+    <h3>Necesitas iniciar sesión para ver tu perfil</h3>
+    <button class="btn btn-primary mt-3" (click)="login()">
+      Iniciar Sesión
+    </button>
+  </div>
+</ng-template>

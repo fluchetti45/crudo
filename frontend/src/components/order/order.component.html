@@ -1,0 +1,23 @@
+<div
+  class="list-group-item list-group-item-action flex-column align-items-start"
+>
+  <div class="d-flex w-100 justify-content-between">
+    <h5 class="mb-1">Orden #{{ order.id }}</h5>
+    <small>{{ order.createdAt | date : "mediumDate" }}</small>
+  </div>
+  <p class="mb-1">
+    Estado:
+    <span class="badge" [ngClass]="getStatusClass(order.status)">{{
+      order.status
+    }}</span>
+  </p>
+  <p class="mb-1">Total: {{ order.total | currency }}</p>
+  <div class="mt-2">
+    <button
+      class="btn btn-sm btn-outline-primary"
+      [routerLink]="['/order', order.id]"
+    >
+      Ver detalles
+    </button>
+  </div>
+</div>

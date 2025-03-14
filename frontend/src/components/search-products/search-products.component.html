@@ -1,0 +1,97 @@
+<div class="container mt-4">
+  <ng-container *ngIf="searchResults$ | async as searchResults; else loading">
+    <div *ngIf="searchResults.length > 0; else noResults">
+      <h2>Resultados de búsqueda para: "{{ searchTerm }}"</h2>
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col" *ngFor="let product of searchResults">
+          <div class="card h-100">
+            <img
+              [src]="product.filePathCover"
+              class="card-img-top"
+              [alt]="product.name"
+            />
+            <div class="card-body">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text">
+                {{ getPreviewDescription(product.description) }}
+              </p>
+              <p class="card-text">
+                <strong>Precio: </strong>{{ product.price | currency }}
+              </p>
+            </div>
+            <div class="card-footer">
+              <a [routerLink]="['/product', product.id]" class="btn btn-primary"
+                >Ver detalles</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<ng-template #loading>
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #noResults>
+  <div class="no-results-container text-center py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="no-results-icon mb-4">
+          <i class="bi bi-search text-primary"></i>
+        </div>
+        <h3 class="mb-3">No encontramos resultados para "{{ searchTerm }}"</h3>
+        <p class="text-muted mb-4">
+          Pero no te preocupes, tenemos muchos otros productos que podrían
+          interesarte.
+        </p>
+
+        <div class="search-suggestions mb-5">
+          <h5 class="mb-3">Sugerencias:</h5>
+          <ul class="list-unstyled">
+            <li>
+              <i class="bi bi-check2-circle me-2"></i> Revisa que todas las
+              palabras estén escritas correctamente
+            </li>
+            <li>
+              <i class="bi bi-check2-circle me-2"></i> Intenta usar términos más
+              generales
+            </li>
+            <li>
+              <i class="bi bi-check2-circle me-2"></i> Prueba con sinónimos
+            </li>
+          </ul>
+
+          <div class="mt-4">
+            <form class="d-flex justify-content-center" (ngSubmit)="onSearch()">
+              <div class="input-group" style="max-width: 500px">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Intenta con otra búsqueda..."
+                  name="newSearchTerm"
+                  [(ngModel)]="newSearchTerm"
+                />
+                <button class="btn btn-primary" type="submit">
+                  <i class="bi bi-search me-1"></i> Buscar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="mt-5">
+          <a routerLink="/" class="btn btn-outline-primary">
+            <i class="bi bi-house-door me-2"></i> Ir a la página principal
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

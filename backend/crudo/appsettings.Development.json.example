@@ -1,0 +1,28 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=db;Database=crudo;User Id=sa;Password=your_password;TrustServerCertificate=True;"
+  },
+  "Mailgun": {
+    "ApiKey": "your_mailgun_api_key",
+    "Domain": "your_mailgun_domain"
+  },
+  "Mailchimp": {
+    "ApiKey": "your_mailchimp_api_key",
+    "ListId": "your_mailchimp_list_id"
+  },
+  "Auth0": {
+    "Domain": "your_auth0_domain",
+    "Audience": "http://localhost:5075"
+  },
+  "Cloudinary": {
+    "CloudName": "your_cloudinary_cloud_name",
+    "ApiKey": "your_cloudinary_api_key",
+    "ApiSecret": "your_cloudinary_api_secret"
+  }
+} 

@@ -1,0 +1,239 @@
+<div class="container py-4">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="mb-4">Editar Producto</h2>
+
+      <ng-container *ngIf="loading$ | async; else productContent">
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-3 text-muted">Cargando datos...</p>
+        </div>
+      </ng-container>
+      <ng-template #productContent>
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0">Información del Producto</h5>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="productForm" (ngSubmit)="updateProduct()">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="name" class="form-label"
+                    >Nombre del Producto</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="name"
+                    formControlName="name"
+                    [class.is-invalid]="submitted && f['name'].errors"
+                  />
+                  <div
+                    *ngIf="submitted && f['name'].errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="f['name'].errors['required']">
+                      El nombre es requerido
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-3">
+                  <label for="price" class="form-label">Precio</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="price"
+                      formControlName="price"
+                      [class.is-invalid]="submitted && f['price'].errors"
+                    />
+                    <div
+                      *ngIf="submitted && f['price'].errors"
+                      class="invalid-feedback"
+                    >
+                      <div *ngIf="f['price'].errors['required']">
+                        El precio es requerido
+                      </div>
+                      <div *ngIf="f['price'].errors['min']">
+                        El precio debe ser mayor a 0
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-3">
+                  <label for="stock" class="form-label">Stock</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="stock"
+                    formControlName="stock"
+                    [class.is-invalid]="submitted && f['stock'].errors"
+                  />
+                  <div
+                    *ngIf="submitted && f['stock'].errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="f['stock'].errors['required']">
+                      El stock es requerido
+                    </div>
+                    <div *ngIf="f['stock'].errors['min']">
+                      El stock no puede ser negativo
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="category" class="form-label">Categoría</label>
+                <select
+                  class="form-select"
+                  id="category"
+                  formControlName="categoryId"
+                  [class.is-invalid]="submitted && f['categoryId'].errors"
+                >
+                  <option value="">Seleccionar categoría</option>
+                  <option
+                    *ngFor="let category of categories$ | async"
+                    [value]="category.id"
+                  >
+                    {{ category.name }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="submitted && f['categoryId'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['categoryId'].errors['required']">
+                    La categoría es requerida
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="description" class="form-label">Descripción</label>
+                <div class="NgxEditor__Wrapper">
+                  <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
+                  <ngx-editor
+                    [editor]="editor"
+                    formControlName="description"
+                    [placeholder]="'Escribe la descripción del producto...'"
+                  ></ngx-editor>
+                </div>
+                <div
+                  *ngIf="submitted && f['description'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['description'].errors['required']">
+                    La descripción es requerida
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-end gap-2">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  (click)="cancel()"
+                >
+                  Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  Guardar Cambios
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </ng-template>
+
+      <!-- Componente de gestión de imágenes -->
+      <app-product-image
+        [productId]="productId"
+        [productImages]="(product$ | async)?.productImages || []"
+      ></app-product-image>
+
+      <!-- Zona de Acciones Peligrosas -->
+      <div class="card mt-4 border-danger">
+        <div class="card-header bg-danger text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            Zona de Acciones Peligrosas
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-warning">
+            <strong>Advertencia:</strong> Las acciones en esta sección son
+            irreversibles y pueden afectar permanentemente al producto.
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    {{
+                      (product$ | async)?.isDeleted
+                        ? "Activar Producto"
+                        : "Dar de Baja el Producto"
+                    }}
+                  </h5>
+                  <p class="card-text" *ngIf="!(product$ | async)?.isDeleted">
+                    Al dar de baja el producto, este dejará de estar visible
+                    para los clientes pero se mantendrá en la base de datos.
+                  </p>
+                  <p class="card-text" *ngIf="(product$ | async)?.isDeleted">
+                    Al activar el producto, este volverá a estar visible para
+                    los clientes y disponible para la venta.
+                  </p>
+                  <button
+                    type="button"
+                    (click)="handleActivation()"
+                    [class]="
+                      (product$ | async)?.isDeleted
+                        ? 'btn btn-outline-success'
+                        : 'btn btn-outline-danger'
+                    "
+                  >
+                    <i
+                      [class]="
+                        (product$ | async)?.isDeleted
+                          ? 'bi bi-check-circle-fill me-2'
+                          : 'bi bi-archive-fill me-2'
+                      "
+                    ></i>
+                    {{
+                      (product$ | async)?.isDeleted
+                        ? "Activar Producto"
+                        : "Dar de Baja"
+                    }}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h5 class="card-title">Eliminar Permanentemente</h5>
+                  <p class="card-text">
+                    Esta acción eliminará completamente el producto de la base
+                    de datos y no se podrá recuperar.
+                  </p>
+                  <button type="button" class="btn btn-danger">
+                    <i class="bi bi-trash-fill me-2"></i>
+                    Eliminar Permanentemente
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

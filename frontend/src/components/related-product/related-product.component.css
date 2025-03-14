@@ -1,0 +1,28 @@
+.card {
+    transition: transform 0.3s ease-in-out;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  .card.out-of-stock {
+    filter: grayscale(100%);
+    opacity: 0.7;
+  }
+  .card.out-of-stock:hover {
+    transform: none;
+  }
+  .card-title {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .card-text {
+    font-size: 0.9rem;
+    color: #007bff;
+    font-weight: bold;
+  }
+  .stock-status {
+    color: #dc3545;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin: 0;
+  }

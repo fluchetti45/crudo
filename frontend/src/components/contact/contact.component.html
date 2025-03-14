@@ -1,0 +1,65 @@
+<div class="container py-5">
+  <h1 class="mb-4">Contáctanos</h1>
+  <div class="row">
+    <div class="col-md-6">
+      <h2>Información de Contacto</h2>
+      <p><strong>Dirección:</strong> 123 Calle Principal, Ciudad, País</p>
+      <p><strong>Teléfono:</strong> +1 234 567 890</p>
+      <p><strong>Email:</strong> info.crudo.com</p>
+      <h3 class="mt-4">Horario de Atención</h3>
+      <p>Lunes a Viernes: 9:00 AM - 6:00 PM</p>
+      <p>Sábados: 10:00 AM - 2:00 PM</p>
+      <p>Domingos: Cerrado</p>
+    </div>
+    <div class="col-md-6">
+      <h2>Envíanos un Mensaje</h2>
+      <form (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="name" class="form-label">Nombre</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            [(ngModel)]="contactForm.name"
+            name="name"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            [(ngModel)]="contactForm.email"
+            name="email"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="subject" class="form-label">Asunto</label>
+          <input
+            type="text"
+            class="form-control"
+            id="subject"
+            [(ngModel)]="contactForm.subject"
+            name="subject"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="message" class="form-label">Mensaje</label>
+          <textarea
+            class="form-control"
+            id="message"
+            rows="5"
+            [(ngModel)]="contactForm.message"
+            name="message"
+            required
+          ></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar Mensaje</button>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+/* Contenedor principal con flexbox, pero invierto el orden de los elementos */
+.image-container {
+    display: flex;
+    align-items: center; /* Centra verticalmente las imágenes */
+    flex-direction: row-reverse; /* Pone las miniaturas a la izquierda */
+  }
+  
+  /* Imagen principal */
+  .main-image {
+    width: 100%;
+    max-width: 500px; /* Ajusta el tamaño de la imagen principal */
+    height: auto;
+    object-fit: cover;
+  }
+  
+  /* Contenedor de las miniaturas a la izquierda */
+  .thumbnail-container-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 15px; /* Separación entre la imagen principal y las miniaturas */
+  }
+  
+  /* Miniaturas de las imágenes */
+  .thumbnail-container {
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  
+  .thumbnail-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    transition: transform 0.2s, border-color 0.2s; /* Efecto de transición */
+  }
+  
+  .thumbnail-img.selected {
+    border-color: #007bff;
+    transform: scale(1.1); /* Aumenta el tamaño de la miniatura seleccionada */
+  }
+  
+  /* Estilos para el modal */
+.modal {
+    display: none; /* Ocultamos el modal por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro para el modal */
+    z-index: 1000; /* Aseguramos que esté por encima de otros elementos */
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal.show {
+    display: flex; /* Mostramos el modal si el flag modalOpen es true */
+  }
+  
+  .modal-dialog {
+    max-width: 90%;
+    max-height: 80%;
+    overflow: hidden;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 15px;
+  }
+  
+  .modal-header .close {
+    font-size: 30px;
+    cursor: pointer;
+  }
+  
+  .modal-body {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .modal-image {
+    max-width: 100%;
+    max-height: 80vh; /* Ajustamos el tamaño máximo de la imagen */
+    object-fit: contain;
+  }
+  

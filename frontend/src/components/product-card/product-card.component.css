@@ -1,0 +1,51 @@
+.product-card {
+  transition: transform 0.2s ease-in-out;
+  height: 100%;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  cursor: pointer;
+}
+
+.product-card.out-of-stock {
+  filter: grayscale(100%);
+  opacity: 0.7;
+}
+
+.product-card.out-of-stock:hover {
+  transform: none;
+  cursor: default;
+}
+
+.product-image-container {
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 48px; /* Altura fija para 2 líneas de texto */
+  margin-bottom: 0.5rem;
+}
+
+.stock-status {
+  color: #dc3545;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.card-body {
+  padding: 1rem;
+}

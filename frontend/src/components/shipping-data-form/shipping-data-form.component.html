@@ -1,0 +1,169 @@
+<div class="container">
+  <h2 *ngIf="creating">Registrar nueva direccion de envio</h2>
+  <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title mb-4">Información de Envío</h5>
+
+        <div class="row">
+          <!-- Nombre -->
+          <div class="col-md-6 mb-3">
+            <label for="firstName" class="form-label">Nombre</label>
+            <input
+              type="text"
+              class="form-control"
+              id="firstName"
+              formControlName="firstName"
+              [readOnly]="selectedAddress != null"
+            />
+            <div
+              *ngIf="
+                checkoutForm.get('firstName')?.invalid &&
+                checkoutForm.get('firstName')?.touched
+              "
+              class="text-danger small"
+            >
+              Nombre es requerido
+            </div>
+          </div>
+
+          <!-- Apellido -->
+          <div class="col-md-6 mb-3">
+            <label for="lastName" class="form-label">Apellido</label>
+            <input
+              type="text"
+              class="form-control"
+              id="lastName"
+              formControlName="lastName"
+              [readOnly]="selectedAddress != null"
+            />
+            <div
+              *ngIf="
+                checkoutForm.get('lastName')?.invalid &&
+                checkoutForm.get('lastName')?.touched
+              "
+              class="text-danger small"
+            >
+              Apellido es requerido
+            </div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            formControlName="email"
+            [readOnly]="selectedAddress != null"
+          />
+          <div
+            *ngIf="
+              checkoutForm.get('email')?.invalid &&
+              checkoutForm.get('email')?.touched
+            "
+            class="text-danger small"
+          >
+            Email válido es requerido
+          </div>
+        </div>
+
+        <!-- Dirección -->
+        <div class="mb-3">
+          <label for="address" class="form-label">Dirección</label>
+          <input
+            type="text"
+            class="form-control"
+            id="address"
+            formControlName="address"
+            [readOnly]="selectedAddress != null"
+          />
+          <div
+            *ngIf="
+              checkoutForm.get('address')?.invalid &&
+              checkoutForm.get('address')?.touched
+            "
+            class="text-danger small"
+          >
+            Dirección es requerida
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Ciudad -->
+          <div class="col-md-6 mb-3">
+            <label for="city" class="form-label">Ciudad</label>
+            <input
+              type="text"
+              class="form-control"
+              id="city"
+              formControlName="city"
+              [readOnly]="selectedAddress != null"
+            />
+            <div
+              *ngIf="
+                checkoutForm.get('city')?.invalid &&
+                checkoutForm.get('city')?.touched
+              "
+              class="text-danger small"
+            >
+              Ciudad es requerida
+            </div>
+          </div>
+
+          <!-- País -->
+          <div class="col-md-6 mb-3">
+            <label for="country" class="form-label">País</label>
+            <input
+              type="text"
+              class="form-control"
+              id="country"
+              formControlName="country"
+              [readOnly]="selectedAddress != null"
+            />
+            <div
+              *ngIf="
+                checkoutForm.get('country')?.invalid &&
+                checkoutForm.get('country')?.touched
+              "
+              class="text-danger small"
+            >
+              País es requerido
+            </div>
+          </div>
+        </div>
+
+        <!-- Código Postal -->
+        <div class="mb-3">
+          <label for="postalCode" class="form-label">Código Postal</label>
+          <input
+            type="text"
+            class="form-control"
+            id="postalCode"
+            formControlName="postalCode"
+            [readOnly]="selectedAddress != null"
+          />
+          <div
+            *ngIf="
+              checkoutForm.get('postalCode')?.invalid &&
+              checkoutForm.get('postalCode')?.touched
+            "
+            class="text-danger small"
+          >
+            Código Postal es requerido
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      class="btn btn-primary btn-lg w-100"
+      [disabled]="checkoutForm.invalid"
+    >
+      {{ creating ? "Registrar direccion" : "Realizar pedido" }}
+    </button>
+  </form>
+</div>
