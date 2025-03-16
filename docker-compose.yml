@@ -5,9 +5,11 @@ services:
   db:
     container_name: db
     image: mcr.microsoft.com/mssql/server:2022-latest
+    user: "0:0"
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=${DB_SA_PASSWORD}
+      - MSSQL_PID=Express
     ports:
       - "1433:1433"
     volumes:
