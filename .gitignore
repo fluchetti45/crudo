@@ -33,3 +33,6 @@ Thumbs.db
 .env
 backend/crudo/appsettings.Development.json
 backend/crudo/appsettings.Production.json
+
+# SQL Server data
+sqldata/

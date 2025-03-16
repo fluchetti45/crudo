@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="../../.env" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="brevo_csharp" Version="1.0.0" />
     <PackageReference Include="CloudinaryDotNet" Version="1.27.4" />
     <PackageReference Include="DotNetEnv" Version="3.0.0" />

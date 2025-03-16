@@ -8,12 +8,28 @@ using Microsoft.OpenApi.Models;
 using DotNetEnv;
 
 // Cargar variables de entorno desde el archivo .env
-DotNetEnv.Env.Load("../../.env");
+try
+{
+    // En el contenedor, el archivo estará en /app/.env
+    var envPath = File.Exists("/app/.env") ? "/app/.env" :
+                  File.Exists(".env") ? ".env" :
+                  "../../.env";
+
+    DotNetEnv.Env.Load(envPath);
+}
+catch (Exception e)
+{
+    Console.WriteLine($"Warning: No se pudo cargar el archivo .env: {e.Message}");
+    // Continuamos la ejecución ya que las variables pueden estar definidas en el ambiente
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
 // DBContext
-var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") ??
+    builder.Configuration.GetConnectionString("DefaultConnection") ??
+    throw new InvalidOperationException("Connection string not found.");
+
 builder.Services.AddDbContext<CrudoContext>(options =>
 {
     options.UseSqlServer(connectionString, sqlServerOptions =>

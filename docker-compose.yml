@@ -11,15 +11,18 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - sqldata:/var/opt/mssql
+      - ./sqldata:/var/opt/mssql
     networks:
       - ecommerce-net
 
   # Backend
   backend:
+    container_name: backend
     build:
       context: ./backend/crudo
       dockerfile: Dockerfile
+    volumes:
+      - ./.env:/app/.env:ro
     ports:
       - "5075:5075"
     environment:
@@ -41,6 +44,7 @@ services:
 
   # Frontend
   frontend:
+    container_name: frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
