@@ -76,8 +76,6 @@ export class ShippingDataFormComponent implements OnChanges {
 
   onSubmit() {
     if (this.checkoutForm.valid) {
-      console.log('VALID FORM');
-      console.log(this.checkoutForm.value);
       // Despacho la action
       this._store.dispatch(
         oncheckout({ shippingData: this.checkoutForm.value })
@@ -86,17 +84,4 @@ export class ShippingDataFormComponent implements OnChanges {
       console.log('INVALID FORM');
     }
   }
-  /*
-  disableFormControls(): void {
-    Object.keys(this.checkoutForm.controls).forEach((key) => {
-      this.checkoutForm.get(key)?.disable();
-    });
-  }
-
-  enableFormControls(): void {
-    Object.keys(this.checkoutForm.controls).forEach((key) => {
-      this.checkoutForm.get(key)?.enable();
-    });
-  }
-    */
 }

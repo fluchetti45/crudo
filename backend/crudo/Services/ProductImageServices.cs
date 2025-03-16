@@ -13,15 +13,15 @@ namespace crudo.Services
         private readonly Cloudinary _cloudinary;
         private readonly ILogger<ProductImageServices> _logger;
 
-        public ProductImageServices(CrudoContext context, IConfiguration configuration, ILogger<ProductImageServices> logger)
+        public ProductImageServices(CrudoContext context, ILogger<ProductImageServices> logger)
         {
             _context = context;
             _logger = logger;
 
             var acc = new Account(
-                configuration["Cloudinary:CloudName"],
-                configuration["Cloudinary:ApiKey"],
-                configuration["Cloudinary:ApiSecret"]
+                Environment.GetEnvironmentVariable("CLOUDINARY_CLOUD_NAME"),
+                Environment.GetEnvironmentVariable("CLOUDINARY_API_KEY"),
+                Environment.GetEnvironmentVariable("CLOUDINARY_API_SECRET")
             );
             _cloudinary = new Cloudinary(acc);
         }

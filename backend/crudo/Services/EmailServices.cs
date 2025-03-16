@@ -8,11 +8,11 @@ namespace crudo.Services
 
         private readonly string apiKey;
         private readonly string listId;
-        public EmailServices(IConfiguration configuration)
+        public EmailServices()
         {
 
-            apiKey = configuration["Mailchimp:ApiKey"];
-            listId = configuration["Mailchimp:ListId"];
+            apiKey = Environment.GetEnvironmentVariable("MAILCHIMP_API_KEY");
+            listId = Environment.GetEnvironmentVariable("MAILCHIMP_LIST_ID");
         }
 
         public async Task<bool> Subscribe(string email)

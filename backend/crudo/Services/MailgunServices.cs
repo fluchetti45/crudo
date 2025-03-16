@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace crudo.Services
@@ -11,10 +10,10 @@ namespace crudo.Services
         private readonly ILogger<MailgunService> _logger;
         private readonly string _mailgunApiUrl = "https://api.mailgun.net/v3/{0}/messages";
 
-        public MailgunService(IConfiguration configuration, ILogger<MailgunService> logger)
+        public MailgunService(ILogger<MailgunService> logger)
         {
-            _apiKey = configuration["Mailgun:ApiKey"];
-            _domain = configuration["Mailgun:Domain"];
+            _apiKey = Environment.GetEnvironmentVariable("MAILGUN_API_KEY");
+            _domain = Environment.GetEnvironmentVariable("MAILGUN_DOMAIN");
             _logger = logger;
         }
 

@@ -5,11 +5,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.OpenApi.Models;
+using DotNetEnv;
+
+// Cargar variables de entorno desde el archivo .env
+DotNetEnv.Env.Load("../../.env");
 
 var builder = WebApplication.CreateBuilder(args);
 
 // DBContext
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 builder.Services.AddDbContext<CrudoContext>(options =>
 {
     options.UseSqlServer(connectionString, sqlServerOptions =>
@@ -22,12 +26,13 @@ builder.Services.AddDbContext<CrudoContext>(options =>
 });
 
 // JWT
-var domain = $"https://{builder.Configuration["Auth0:Domain"]}/";
+var domain = Environment.GetEnvironmentVariable("AUTH0_DOMAIN");
+var audience = Environment.GetEnvironmentVariable("AUTH0_AUDIENCE");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
-    options.Authority = domain;
-    options.Audience = builder.Configuration["Auth0:Audience"];
+    options.Authority = $"https://{domain}/";
+    options.Audience = audience;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         NameClaimType = ClaimTypes.NameIdentifier,
@@ -242,7 +247,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-app.UseStaticFiles();
 app.UseCors("AllowAny");
 app.UseAuthentication();
 app.UseAuthorization();

@@ -316,7 +316,7 @@ namespace crudo.Services
                     // Verificar disponibilidad y reducir el stock de los productos en paralelo
                     var tasks = groupedItems.Select(async item =>
                     {
-                        var product = products.FirstOrDefault(p => p.Id == item.ProductId);
+                        var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == item.ProductId);
                         if (product == null || product.Stock < item.TotalQuantity)
                         {
                             throw new Exception($"No hay suficiente stock para el producto con ID: {item.ProductId}.");
@@ -338,6 +338,7 @@ namespace crudo.Services
                         OrderId = order.Id,
                         ProductId = item.ProductId,
                         Quantity = item.Quantity,
+                        Price = item.Product.Price,
                     }).ToList();
 
                     // Guardar los items del pedido en la base de datos

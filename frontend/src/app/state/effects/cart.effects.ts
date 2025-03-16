@@ -22,7 +22,6 @@ export class CartEffects {
             console.log('Respuesta de la API:', cartItem); // Ver si aquí llega la respuesta del backend
           }),
           map((cartItem) => {
-            console.log(cartItem);
             this._toastr.success('Producto agregado al carrito', 'Éxito');
             return CartActions.addProductSuccess({
               product: cartItem,
