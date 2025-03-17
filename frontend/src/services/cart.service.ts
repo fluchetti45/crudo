@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Cart } from '../app/models/cart/cart.interface';
 import { AddCartItem } from '../app/models/cart/addCartItem.interface';
-import { ShippingData } from '../app/models/order/order.interface';
+import { Order, ShippingData } from '../app/models/order/order.interface';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -40,8 +40,8 @@ export class CartService {
     return this._http.put<CartItem>(`${this._url}/${itemId}`, quantity);
   }
 
-  checkoutCart(shippingData: ShippingData): Observable<ShippingData> {
-    return this._http.post<ShippingData>(`${this._url}/checkout`, shippingData);
+  checkoutCart(shippingData: ShippingData): Observable<Order> {
+    return this._http.post<Order>(`${this._url}/checkout`, shippingData);
   }
 
   getUserCart() {

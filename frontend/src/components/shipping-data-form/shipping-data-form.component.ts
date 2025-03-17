@@ -80,8 +80,6 @@ export class ShippingDataFormComponent implements OnChanges {
       this._store.dispatch(
         oncheckout({ shippingData: this.checkoutForm.value })
       );
-    } else {
-      console.log('INVALID FORM');
     }
   }
 }

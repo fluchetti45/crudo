@@ -6,12 +6,13 @@ import * as CartActions from '../actions/cart.actions';
 import { mergeMap, map, catchError, switchMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { CartItem } from '../../models/cart/cartItem.iterface';
-
+import { Router } from '@angular/router';
 @Injectable()
 export class CartEffects {
   private actions$ = inject(Actions);
   private _cart = inject(CartService);
   private _toastr = inject(ToastrService);
+  private _router = inject(Router);
 
   addProduct$ = createEffect(() =>
     this.actions$.pipe(
@@ -103,9 +104,9 @@ export class CartEffects {
       ofType(CartActions.oncheckout),
       mergeMap(({ shippingData }) =>
         this._cart.checkoutCart(shippingData).pipe(
-          map((cart) => {
-            console.log(cart);
+          map((order) => {
             this._toastr.success('Compra realizada!', 'Exito');
+            this._router.navigate(['/order', order.id]);
             return CartActions.oncheckoutSuccess();
           }),
           catchError((err) =>

@@ -14,10 +14,12 @@ namespace crudo.Controllers
     public class CartController : ControllerBase
     {
         private readonly CartServices _services;
+        private readonly ILogger<CartController> _logger;
 
-        public CartController(CartServices services)
+        public CartController(CartServices services, ILogger<CartController> logger)
         {
             _services = services;
+            _logger = logger;
         }
 
         [HttpGet]
