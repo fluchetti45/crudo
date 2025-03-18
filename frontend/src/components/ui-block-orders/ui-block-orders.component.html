@@ -1,30 +1,152 @@
-<div class="container mt-4">
-  <h2 class="mb-4">Mis Órdenes</h2>
+<div class="orders-dashboard">
+  <div class="container py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div
+          class="d-flex flex-column flex-md-row justify-content-between align-items-md-center"
+        >
+          <div>
+            <h2 class="orders-title">Mis Compras</h2>
+            <p class="text-muted">
+              Historial de tus pedidos y estado de entrega
+            </p>
+          </div>
 
-  <ng-container *ngIf="loading$; else ordersContent">
-    <div class="text-center">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Cargando órdenes...</span>
+          <!-- Pending Reviews Notification -->
+          <div *ngIf="countPendingReviews$ > 0" class="pending-reviews-alert">
+            <div class="alert-content">
+              <div class="alert-icon">
+                <i class="bi bi-star"></i>
+                <span class="alert-badge">{{ countPendingReviews$ }}</span>
+              </div>
+              <div class="alert-text">
+                <p>Productos pendientes de revisión</p>
+                <a class="btn btn-sm btn-primary" routerLink="/profile/reviews">
+                  <i class="bi bi-pencil-square me-1"></i>Opinar ahora
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <p class="mt-2">Cargando tus órdenes...</p>
     </div>
-  </ng-container>
 
-  <ng-template #ordersContent>
-    <ng-container *ngIf="orders$?.length; else noOrders">
-      <div class="list-group">
-        <app-order
-          *ngFor="let order of orders$"
-          [order]="order"
-          class="mb-3"
-        ></app-order>
+    <!-- Filters Section -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="orders-filters">
+          <div class="filter-tabs">
+            <button class="filter-button active">
+              <i class="bi bi-calendar-check me-2"></i>Todas
+            </button>
+            <button class="filter-button">
+              <i class="bi bi-truck me-2"></i>En proceso
+            </button>
+            <button class="filter-button">
+              <i class="bi bi-check-circle me-2"></i>Completadas
+            </button>
+          </div>
+          <div class="search-filter">
+            <div class="input-group">
+              <span class="input-group-text bg-white border-end-0">
+                <i class="bi bi-search"></i>
+              </span>
+              <input
+                type="text"
+                class="form-control border-start-0"
+                placeholder="Buscar por # de orden"
+              />
+            </div>
+          </div>
+        </div>
       </div>
-    </ng-container>
+    </div>
 
-    <ng-template #noOrders>
-      <div class="alert alert-info">
-        No tienes órdenes aún. ¡Empieza a comprar!
-      </div>
-    </ng-template>
-  </ng-template>
+    <!-- Orders Content -->
+    <div class="orders-content">
+      <!-- Loading State -->
+      <ng-container *ngIf="loading$; else ordersContent">
+        <div class="loading-container">
+          <div class="loading-animation">
+            <div class="spinner-grow text-primary" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+            <div
+              class="spinner-grow text-primary"
+              role="status"
+              style="animation-delay: 0.2s"
+            >
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+            <div
+              class="spinner-grow text-primary"
+              role="status"
+              style="animation-delay: 0.4s"
+            >
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+          </div>
+          <p class="loading-text">Cargando tu historial de compras...</p>
+        </div>
+      </ng-container>
+
+      <!-- Orders List -->
+      <ng-template #ordersContent>
+        <ng-container *ngIf="orders$?.length; else noOrders">
+          <div class="orders-list">
+            <app-order
+              *ngFor="let order of orders$"
+              [order]="order"
+              class="order-item"
+            ></app-order>
+          </div>
+
+          <!-- Pagination -->
+          <div class="orders-pagination">
+            <nav aria-label="Navegación de órdenes">
+              <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                  <a
+                    class="page-link"
+                    href="#"
+                    tabindex="-1"
+                    aria-disabled="true"
+                  >
+                    <i class="bi bi-chevron-left"></i>
+                  </a>
+                </li>
+                <li class="page-item active">
+                  <a class="page-link" href="#">1</a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                  <a class="page-link" href="#">
+                    <i class="bi bi-chevron-right"></i>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </ng-container>
+
+        <!-- No Orders State -->
+        <ng-template #noOrders>
+          <div class="no-orders-container">
+            <div class="no-orders-icon">
+              <i class="bi bi-bag"></i>
+            </div>
+            <h3>No tienes órdenes aún</h3>
+            <p class="text-muted">
+              Parece que aún no has realizado ninguna compra
+            </p>
+            <a routerLink="/products" class="btn btn-primary">
+              <i class="bi bi-cart-plus me-2"></i>Explorar productos
+            </a>
+          </div>
+        </ng-template>
+      </ng-template>
+    </div>
+  </div>
 </div>

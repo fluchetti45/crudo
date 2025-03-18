@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.OpenApi.Models;
-using DotNetEnv;
+using crudo.Interfaces;
 
 // Cargar variables de entorno desde el archivo .env
 try
@@ -153,6 +153,7 @@ builder.Services.AddScoped<EmailServices>();
 builder.Services.AddScoped<ShippingDataServices>();
 builder.Services.AddScoped<MailgunService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<ICustomerReviewService, CustomerReviewService>();
 
 var app = builder.Build();
 

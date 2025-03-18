@@ -1,0 +1,28 @@
+<ng-container *ngIf="reviews.length === 0; else reviewsContent">
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="alert alert-info text-center">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        ¡No tienes reviews! Comparte tus opiniones con los productos que has
+        comprado y ayuda a otros usuarios a tomar decisiones.
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #reviewsContent>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Reviews</h1>
+        <div class="card" *ngFor="let review of reviews">
+          <div class="card-body">
+            <h5 class="card-title">{{ review.productId }}</h5>
+            <p class="card-text">{{ review.review }}</p>
+            <p class="card-text">{{ review.rating }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
