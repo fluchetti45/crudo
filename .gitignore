@@ -21,7 +21,7 @@ backend/crudo/*.log
 backend/crudo/*.pdb
 backend/crudo/*.db
 backend/crudo/*.sqlite
-backend/crudo/Migrations/
+#backend/crudo/Migrations/
 
 
 # 🔹 General (Windows, Mac, Linux)
