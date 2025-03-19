@@ -35,6 +35,17 @@ namespace crudo.Controllers
             }
         }
 
+        [HttpGet("basic/{id}")]
+        public async Task<ActionResult<ReadProductDTO>> GetProductBasic(int id)
+        {
+            ReadProductDTO product = await this._services.GetProductBasic(id);
+            if (product != null)
+            {
+                return Ok(product);
+            }
+            return NotFound();
+        }
+
         [HttpGet("admin")]
         [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<PagedResult<ReadProductDTO>>> GetProductsAdmin(

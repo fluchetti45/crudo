@@ -1,0 +1,181 @@
+<div class="review-page">
+  <div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a [routerLink]="['/']" class="text-decoration-none">Inicio</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a [routerLink]="['/profile/reviews']" class="text-decoration-none"
+            >Mis Compras</a
+          >
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          Escribir Opinión
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Product Info Card -->
+    <div class="card product-card mb-4" [routerLink]="['/product', product.id]">
+      <div class="card-body">
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="product-image-container">
+              <img
+                [src]="product.filePathCover"
+                [alt]="product.name"
+                class="product-image"
+              />
+              <div class="product-badge">
+                <i class="bi bi-chat-square-text"></i> Opinión
+              </div>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <h2 class="product-title">{{ product.name }}</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review Form Card -->
+    <div class="card review-form-card">
+      <div class="card-header bg-transparent">
+        <h3 class="mb-0">
+          <i class="bi bi-pencil-square me-2"></i>Escribe tu opinión
+        </h3>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="reviewForm" (ngSubmit)="submitReview()">
+          <!-- Rating Stars -->
+          <div class="form-group mb-4">
+            <label class="form-label">Calificación</label>
+            <div class="rating-container">
+              <div class="stars-container">
+                <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+                  <span
+                    class="star-icon"
+                    [class.active]="star <= currentRating"
+                    [class.hovered]="star <= hoverRating && hoverRating > 0"
+                    (mouseenter)="hoverRating = star"
+                    (mouseleave)="hoverRating = currentRating"
+                    (click)="setRating(star)"
+                  >
+                    <i class="bi" [ngClass]="getRatingIconClass(star)"></i>
+                  </span>
+                </ng-container>
+              </div>
+              <div class="rating-text">
+                {{ getRatingText() }}
+              </div>
+            </div>
+            <div
+              *ngIf="
+                reviewForm.get('rating')?.invalid &&
+                reviewForm.get('rating')?.touched
+              "
+              class="text-danger mt-2"
+            >
+              <i class="bi bi-exclamation-circle me-1"></i>Por favor, selecciona
+              una calificación
+            </div>
+          </div>
+
+          <!-- Review Comment -->
+          <div class="form-group mb-4">
+            <label for="comment" class="form-label"
+              >Tu opinión detallada (opcional)</label
+            >
+            <textarea
+              id="comment"
+              formControlName="comment"
+              class="form-control"
+              rows="5"
+              placeholder="Comparte tu experiencia con este producto. ¿Qué te gustó? ¿Qué no te gustó? ¿Lo recomendarías?"
+            ></textarea>
+          </div>
+
+          <!-- Submit Buttons -->
+          <div class="form-actions">
+            <button
+              [routerLink]="['/profile/reviews']"
+              type="button"
+              class="btn btn-outline-secondary me-2"
+            >
+              <i class="bi bi-x-circle me-2"></i>Cancelar
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="reviewForm.invalid || isSubmitting"
+            >
+              <i class="bi bi-check-circle me-2"></i>
+              <span *ngIf="!isSubmitting">Publicar opinión</span>
+              <span *ngIf="isSubmitting">
+                <span
+                  class="spinner-border spinner-border-sm me-2"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                Enviando...
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Review Guidelines -->
+    <div class="review-guidelines mt-4">
+      <h4>
+        <i class="bi bi-lightbulb me-2"></i>Consejos para una buena opinión
+      </h4>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="guideline-item">
+            <div class="guideline-icon">
+              <i class="bi bi-chat-quote"></i>
+            </div>
+            <div class="guideline-text">
+              <h5>Sé específico</h5>
+              <p>
+                Menciona características concretas del producto que te gustaron
+                o no.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="guideline-item">
+            <div class="guideline-icon">
+              <i class="bi bi-shield-check"></i>
+            </div>
+            <div class="guideline-text">
+              <h5>Sé honesto</h5>
+              <p>
+                Comparte tu experiencia real con el producto, tanto lo bueno
+                como lo malo.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="guideline-item">
+            <div class="guideline-icon">
+              <i class="bi bi-people"></i>
+            </div>
+            <div class="guideline-text">
+              <h5>Sé útil</h5>
+              <p>
+                Piensa en qué información te habría gustado saber antes de
+                comprar.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

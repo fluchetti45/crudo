@@ -1,10 +1,9 @@
-<div class="container my-4">
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">
-        <a [routerLink]="['/category', category.id]"> {{ category.name }}</a>
-      </h5>
-      <p class="card-text">{{ category.description }}</p>
-    </div>
+<div class="category-card" [routerLink]="['/category', category.id]">
+  <div class="category-icon"></div>
+  <div class="category-content">
+    <h3 class="category-title">
+      <a [routerLink]="['/category', category.id]">{{ category.name }}</a>
+    </h3>
+    <p class="category-description">{{ category.description }}</p>
   </div>
 </div>

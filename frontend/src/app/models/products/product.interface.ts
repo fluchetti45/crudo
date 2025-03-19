@@ -9,3 +9,10 @@ export interface Product {
   createdAt: Date;
   filePathCover: string;
 }
+
+export interface ProductForReview {
+  id: number;
+  name: string;
+  filePathCover: string;
+  orderDate: Date;
+}

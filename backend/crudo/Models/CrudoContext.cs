@@ -31,6 +31,8 @@ public partial class CrudoContext : DbContext
 
     public virtual DbSet<OrderStatus> OrderStatuses { get; set; }
 
+    public virtual DbSet<CustomerReview> CustomerReviews { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
     }
@@ -250,6 +252,28 @@ public partial class CrudoContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("user_id");
+        });
+
+        modelBuilder.Entity<CustomerReview>(entity =>
+        {
+            entity.ToTable("CustomerReview");
+            entity.HasKey(e => e.Id).HasName("PK__CustomerReview__3213E83F8C005E2F");
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd() // Configura la clave primaria para ser autoincremental
+                .HasColumnName("id");
+            entity.Property(e => e.UserId)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("user_id");
+            entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.Rating).HasColumnName("rating");
+            entity.Property(e => e.Comment).HasColumnName("comment");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+            entity.HasOne(d => d.Product).WithMany(p => p.CustomerReviews)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__CustomerR__produ__49C3F6B7");
         });
 
         OnModelCreatingPartial(modelBuilder);

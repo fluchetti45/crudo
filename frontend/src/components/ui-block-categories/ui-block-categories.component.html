@@ -1,7 +1,84 @@
-<ng-container *ngIf="loading$ | async; else productsTemplate"> </ng-container>
+<div class="categories-dashboard">
+  <div class="container py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h2 class="categories-title">Categorías</h2>
+        <p class="text-muted">Explora nuestras categorías de productos</p>
+      </div>
+    </div>
 
-<ng-template #productsTemplate>
-  <ng-container *ngFor="let category of categories$ | async">
-    <app-category-detail [category]="category"></app-category-detail>
-  </ng-container>
-</ng-template>
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="categories-filters">
+          <div class="search-filter">
+            <div class="input-group">
+              <span class="input-group-text bg-white border-end-0">
+                <i class="bi bi-search"></i>
+              </span>
+              <input
+                type="text"
+                class="form-control border-start-0"
+                placeholder="Buscar categoría"
+              />
+            </div>
+          </div>
+          <div class="view-options">
+            <button class="view-button active" title="Vista de cuadrícula">
+              <i class="bi bi-grid-3x3-gap-fill"></i>
+            </button>
+            <button class="view-button" title="Vista de lista">
+              <i class="bi bi-list-ul"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories Content -->
+    <div class="categories-content">
+      <!-- Loading State -->
+      <ng-container *ngIf="loading$ | async; else productsTemplate">
+        <div class="loading-container">
+          <div class="loading-grid">
+            <div class="loading-card" *ngFor="let i of [1, 2, 3, 4, 5, 6]">
+              <div class="loading-icon"></div>
+              <div class="loading-title"></div>
+              <div class="loading-description"></div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Categories Grid -->
+      <ng-template #productsTemplate>
+        <div class="categories-grid">
+          <ng-container
+            *ngIf="(categories$ | async)?.length; else noCategories"
+          >
+            <ng-container *ngFor="let category of categories$ | async">
+              <app-category-detail [category]="category"></app-category-detail>
+            </ng-container>
+          </ng-container>
+
+          <!-- No Categories State -->
+          <ng-template #noCategories>
+            <div class="no-categories-container">
+              <div class="no-categories-icon">
+                <i class="bi bi-folder"></i>
+              </div>
+              <h3>No hay categorías disponibles</h3>
+              <p class="text-muted">
+                No se encontraron categorías en este momento
+              </p>
+              <button class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>Crear categoría
+              </button>
+            </div>
+          </ng-template>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

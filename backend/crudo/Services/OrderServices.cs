@@ -81,11 +81,9 @@ namespace crudo.Services
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<ReadOrderDTO>> GetOrders(string userId)
+        private IQueryable<ReadOrderDTO> GetOrdersQuery(string userId, int? statusId)
         {
-            _logger.LogInformation("Obteniendo órdenes para usuario {UserId}", userId);
-
-            return await _context.CustomerOrders
+            return _context.CustomerOrders
                 .Where(o => o.UserId == userId)
                 .OrderByDescending(o => o.CreatedAt)
                 .Select(o => new ReadOrderDTO
@@ -107,9 +105,27 @@ namespace crudo.Services
                         Price = i.Price,
                         Subtotal = i.Price * i.Quantity
                     }).ToList()
-                })
-                .AsSplitQuery()
+                });
+        }
+
+        public async Task<PagedResult<ReadOrderDTO>> GetOrders(string userId, int? statusId, int page = 1, int pageSize = 10)
+        {
+            _logger.LogInformation("Obteniendo órdenes para usuario {UserId}", userId);
+
+            var query = GetOrdersQuery(userId, statusId);
+            var total = await query.CountAsync();
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return new PagedResult<ReadOrderDTO>
+            {
+                Items = items,
+                Total = total,
+                Page = page,
+                PageSize = pageSize
+            };
         }
 
         public async Task<Result<ReadOrderAdminDTO>> UpdateOrderStatus(int orderId, int newStatusId)

@@ -1,11 +1,9 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { AuthService, User } from '@auth0/auth0-angular';
-import { RouterLink, RouterModule } from '@angular/router';
+import { AuthService } from '@auth0/auth0-angular';
+import { RouterModule } from '@angular/router';
 import { ShippingData } from '../../app/models/order/order.interface';
 import { ShippingService } from '../../services/shipping.service';
-import { ShippingAddresComponent } from '../shipping-addres/shipping-addres.component';
-
 import { AddressModalComponent } from '../address-modal/address-modal.component';
 import { ToastrService } from 'ngx-toastr';
 
