@@ -9,14 +9,14 @@ namespace crudo.Services
     public class OrderServices
     {
         private readonly CrudoContext _context;
-        private readonly IInventoryService _inventoryService;
+        private readonly InventoryService _inventoryService;
         private readonly ILogger<OrderServices> _logger;
         private const string DEFAULT_IMAGE_URL = "https://res.cloudinary.com/da8y2vp4k/image/upload/v1741205504/placeholderwebp_wakx4r.webp";
         private const string DEFAULT_STATUS = "Pending";
 
         public OrderServices(
             CrudoContext context,
-            IInventoryService inventoryService,
+            InventoryService inventoryService,
             ILogger<OrderServices> logger)
         {
             _context = context;

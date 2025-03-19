@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using crudo.Models;
-using crudo.Interfaces;
+using crudo.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using crudo.DTOs.Product;
@@ -10,11 +10,11 @@ namespace crudo.Controllers;
 [Route("api/[controller]")]
 public class CustomerReviewController : ControllerBase
 {
-    private readonly ICustomerReviewService _reviewService;
+    private readonly CustomerReviewService _reviewService;
     private readonly ILogger<CustomerReviewController> _logger;
 
     public CustomerReviewController(
-        ICustomerReviewService reviewService,
+        CustomerReviewService reviewService,
         ILogger<CustomerReviewController> logger)
     {
         _reviewService = reviewService;
@@ -31,7 +31,7 @@ public class CustomerReviewController : ControllerBase
 
     [HttpGet("user")]
     [Authorize]
-    public async Task<ActionResult<IEnumerable<CustomerReview>>> GetReviewsByUser()
+    public async Task<ActionResult<IEnumerable<GetReviewDTO>>> GetReviewsByUser()
     {
         string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         var reviews = await _reviewService.GetReviewsByUserAsync(userId);
@@ -40,7 +40,7 @@ public class CustomerReviewController : ControllerBase
 
     // GET: api/CustomerReview/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<CustomerReview>> GetReview(int id)
+    public async Task<ActionResult<GetReviewDTO>> GetReview(int id)
     {
         var review = await _reviewService.GetReviewByIdAsync(id);
         if (review == null)
@@ -52,7 +52,7 @@ public class CustomerReviewController : ControllerBase
 
     // GET: api/CustomerReview/product/5
     [HttpGet("product/{productId}")]
-    public async Task<ActionResult<IEnumerable<CustomerReview>>> GetProductReviews(int productId)
+    public async Task<ActionResult<IEnumerable<GetProductReviewDTO>>> GetProductReviews([FromRoute] int productId)
     {
         var reviews = await _reviewService.GetProductReviewsAsync(productId);
         return Ok(reviews);

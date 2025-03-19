@@ -21,17 +21,36 @@ public class CustomerReviewService : ICustomerReviewService
         return await _context.CustomerReviews.ToListAsync();
     }
 
-    public async Task<CustomerReview?> GetReviewByIdAsync(int id)
+    public async Task<GetReviewDTO?> GetReviewByIdAsync(int id)
     {
         return await _context.CustomerReviews
-            .FirstOrDefaultAsync(r => r.Id == id);
+            .Where(r => r.Id == id)
+            .Select(r => new GetReviewDTO
+            {
+                ProductId = r.ProductId,
+                Rating = r.Rating,
+                Comment = r.Comment,
+                CreatedAt = r.CreatedAt,
+                FilePathCover = r.Product.ProductImages.FirstOrDefault(i => i.IsCover == true)!.FilePath,
+                ProductName = r.Product.Name
+            })
+            .FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<CustomerReview>> GetProductReviewsAsync(int productId)
+    public async Task<IEnumerable<GetProductReviewDTO>> GetProductReviewsAsync(int productId)
     {
         return await _context.CustomerReviews
             .Include(r => r.Product)
             .Where(r => r.ProductId == productId)
+            .Select(r => new GetProductReviewDTO
+            {
+                Id = r.Id,
+                ProductId = r.ProductId,
+                Rating = r.Rating,
+                Comment = r.Comment,
+                CreatedAt = r.CreatedAt,
+                UserId = r.UserId
+            })
             .ToListAsync();
     }
 
@@ -179,16 +198,13 @@ public class CustomerReviewService : ICustomerReviewService
             .CountAsync();
     }
 
-    public async Task<IEnumerable<CustomerReview>> GetReviewsByUserAsync(string userId)
+    public async Task<IEnumerable<GetReviewDTO>> GetReviewsByUserAsync(string userId)
     {
         return await _context.CustomerReviews
             .Where(r => r.UserId == userId)
             .Include(r => r.Product)
-            .Include(r => r.Product.ProductImages)
-            .Select(r => new CustomerReview
+            .Select(r => new GetReviewDTO
             {
-                Id = r.Id,
-                UserId = r.UserId,
                 ProductId = r.ProductId,
                 Rating = r.Rating,
                 Comment = r.Comment,

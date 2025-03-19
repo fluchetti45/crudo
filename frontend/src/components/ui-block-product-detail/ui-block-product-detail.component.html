@@ -11,6 +11,13 @@
         *ngIf="product$ | async as product"
         [product]="product"
       ></app-product-detail>
+      <!-- Cargar las reviews del producto -->
+      <div *ngIf="reviews.length > 0">
+        <h3>Reviews</h3>
+        <div *ngFor="let review of reviews">
+          <app-product-review [review]="review"></app-product-review>
+        </div>
+      </div>
     </ng-container>
   </ng-container>
 

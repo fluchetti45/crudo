@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using crudo.Models;
 
@@ -11,9 +12,11 @@ using crudo.Models;
 namespace crudo.Migrations
 {
     [DbContext(typeof(CrudoContext))]
-    partial class CrudoContextModelSnapshot : ModelSnapshot
+    [Migration("20250319191524_FixReviewModel")]
+    partial class FixReviewModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,0 +1,173 @@
+/* Estilos generales para las reviews */
+.product-reviews {
+    margin: 2rem 0;
+  }
+  
+  /* Tarjeta de review */
+  .review-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #eaeaea;
+    transition: transform 0.2s ease;
+  }
+  
+  .review-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Cabecera de la review */
+  .review-header {
+    padding: 1.25rem;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .review-rating {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .stars-display {
+    display: flex;
+    gap: 0.2rem;
+  }
+  
+  .stars-display i {
+    color: #ffc107;
+    font-size: 0.9rem;
+  }
+  
+  .stars-display i.bi-star {
+    color: #e0e0e0;
+  }
+  
+  .rating-date {
+    font-size: 0.85rem;
+    color: #777;
+  }
+  
+  .review-badge {
+    background-color: #e8f4fe;
+    color: #0d6efd;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+  }
+  
+  .review-badge i {
+    margin-right: 0.35rem;
+  }
+  
+  /* Cuerpo de la review */
+  .review-body {
+    padding: 1.25rem;
+  }
+  
+  .review-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #333;
+  }
+  
+  .review-comment {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+  }
+  
+  .review-content {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+    border-left: 3px solid #f0f0f0;
+  }
+  
+  .review-date {
+    display: flex;
+    align-items: center;
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+  
+  .review-date i {
+    margin-right: 0.5rem;
+  }
+  
+  /* Estilos responsivos */
+  @media (max-width: 767.98px) {
+    .review-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .review-badge {
+      margin-top: 0.5rem;
+      align-self: flex-start;
+    }
+  
+    .review-extras {
+      grid-template-columns: 1fr;
+    }
+  
+    .review-card {
+      padding: 1rem;
+    }
+  }
+  
+  @media (max-width: 575.98px) {
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+    }
+  
+    .user-avatar i {
+      font-size: 1.5rem;
+    }
+  
+    .review-body,
+    .review-header {
+      padding: 1rem;
+    }
+  
+    .helpful-section {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .helpful-section button {
+      margin-top: 0.5rem;
+    }
+  }
+  
+  /* Animaciones */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .review-card {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+  
+  

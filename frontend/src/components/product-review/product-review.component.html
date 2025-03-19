@@ -1,0 +1,23 @@
+<div class="product-reviews">
+  <div class="review-card">
+    <div class="review-header">
+      <div class="review-rating">
+        <div class="stars-display">
+          <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+            <i
+              class="bi"
+              [ngClass]="star <= review.rating ? 'bi-star-fill' : 'bi-star'"
+            ></i>
+          </ng-container>
+        </div>
+        <span class="rating-date">{{
+          review.createdAt | date : "dd MMM, yyyy"
+        }}</span>
+      </div>
+    </div>
+
+    <div class="review-body">
+      <p class="review-comment">{{ review.comment }}</p>
+    </div>
+  </div>
+</div>

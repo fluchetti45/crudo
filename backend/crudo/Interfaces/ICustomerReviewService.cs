@@ -6,10 +6,10 @@ namespace crudo.Interfaces;
 public interface ICustomerReviewService
 {
     Task<IEnumerable<CustomerReview>> GetAllReviewsAsync();
-    Task<CustomerReview?> GetReviewByIdAsync(int id);
-    Task<IEnumerable<CustomerReview>> GetProductReviewsAsync(int productId);
+    Task<GetReviewDTO?> GetReviewByIdAsync(int id);
+    Task<IEnumerable<GetProductReviewDTO>> GetProductReviewsAsync(int productId);
 
-    Task<IEnumerable<CustomerReview>> GetReviewsByUserAsync(string userId);
+    Task<IEnumerable<GetReviewDTO>> GetReviewsByUserAsync(string userId);
     Task<CustomerReview> CreateReviewAsync(string userId, GenerateReviewDTO review);
     Task UpdateReviewAsync(int id, CustomerReview review);
     Task DeleteReviewAsync(int id);
