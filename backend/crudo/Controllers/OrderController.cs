@@ -21,10 +21,10 @@ namespace crudo.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReadOrderDTO>>> GetOrders()
+        public async Task<ActionResult<PagedResult<ReadOrderDTO>>> GetOrders([FromQuery] int? statusId, [FromQuery] int page = 1, [FromQuery] int pageSize = 5)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var orders = await _services.GetOrders(userId);
+            var orders = await _services.GetOrders(userId, statusId, page, pageSize);
             if (orders != null)
             {
                 return Ok(orders);

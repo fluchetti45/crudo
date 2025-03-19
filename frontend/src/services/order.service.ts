@@ -21,8 +21,15 @@ export class OrdersService {
     return this._http.post<Order>(this._url, { shippingData });
   }
 
-  getOrders(): Observable<Order[]> {
-    return this._http.get<Order[]>(this._url);
+  getOrders(
+    statusId: number | null,
+    page: number = 1,
+    pageSize: number = 5
+  ): Observable<PagedResult<Order>> {
+    console.log('getOrders', page, pageSize);
+    let url = `${this._url}?page=${page}&pageSize=${pageSize}`;
+    console.log('getOrders', url);
+    return this._http.get<PagedResult<Order>>(url);
   }
 
   getOrdersAdmin(

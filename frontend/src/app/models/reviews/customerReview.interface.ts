@@ -2,6 +2,9 @@ export interface CustomerReview {
   id: number;
   productId: number;
   userId: number;
-  review: string;
+  comment: string;
   rating: number;
+  createdAt: Date;
+  filePathCover: string;
+  productName: string;
 }

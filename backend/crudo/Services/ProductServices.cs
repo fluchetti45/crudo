@@ -19,11 +19,39 @@ namespace crudo.Services
             CoverPlaceholder = "https://res.cloudinary.com/da8y2vp4k/image/upload/v1741205504/placeholderwebp_wakx4r.webp";
         }
 
+        public async Task<ReadProductDTO> GetProductBasic(int productId)
+        {
+            try
+            {
+                ReadProductDTO product = await _context.Products.Where(p => p.Id == productId && p.isDeleted == false).Select(p => new ReadProductDTO
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Stock = p.Stock,
+                    CreatedAt = p.CreatedAt,
+                    UpdatedAt = p.UpdatedAt,
+                    CategoryId = p.CategoryId,
+                    CategoryName = p.Category.Name,
+                    filePathCover = _context.ProductImages
+                                               .Where(pi => pi.ProductId == p.Id && pi.IsCover == true)
+                                               .Select(pi => pi.FilePath)
+                                               .FirstOrDefault() ?? this.CoverPlaceholder
+                }).FirstOrDefaultAsync();
+                return product;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
         public async Task<IEnumerable<ReadProductDTO>> GetProducts()
         {
             try
             {
-                var products = await _context.Products
+                IEnumerable<ReadProductDTO> products = await _context.Products
                     .Where(p => p.isDeleted == false) // Filtrar productos no eliminados
                     .Select(p => new ReadProductDTO
                     {

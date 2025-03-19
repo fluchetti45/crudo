@@ -1,0 +1,339 @@
+/* General Styles */
+.review-page {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+  
+  .breadcrumb {
+    background-color: transparent;
+    padding: 0;
+  }
+  
+  .breadcrumb-item a {
+    color: var(--bs-primary);
+  }
+  
+  /* Product Card Styles */
+  .product-card {
+    border: none;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+  
+  .product-image-container {
+    position: relative;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .product-image {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+  }
+  
+  .product-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--bs-primary);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+  }
+  
+  .product-badge i {
+    margin-right: 5px;
+  }
+  
+  .product-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  
+  .product-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+  
+  .product-meta span {
+    display: flex;
+    align-items: center;
+  }
+  
+  .product-meta i {
+    margin-right: 5px;
+  }
+  
+  .product-description {
+    color: #6c757d;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .product-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--bs-primary);
+  }
+  
+  /* Review Form Card Styles */
+  .review-form-card {
+    border: none;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  }
+  
+  .review-form-card .card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .review-form-card .card-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .review-form-card .card-body {
+    padding: 1.5rem;
+  }
+  
+  .form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Rating Stars Styles */
+  .rating-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .stars-container {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .star-icon {
+    font-size: 2rem;
+    cursor: pointer;
+    color: #e0e0e0;
+    transition: all 0.2s ease;
+  }
+  
+  .star-icon.active {
+    color: #ffc107;
+  }
+  
+  .star-icon.hovered {
+    color: #ffdb70;
+  }
+  
+  .star-icon:hover {
+    transform: scale(1.1);
+  }
+  
+  .rating-text {
+    font-size: 0.9rem;
+    color: #6c757d;
+    height: 1.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  /* Form Controls Styles */
+  .form-control {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 0.75rem;
+    transition: all 0.2s ease;
+  }
+  
+  .form-control:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+  
+  .form-text {
+    font-size: 0.85rem;
+  }
+  
+  /* Photo Upload Styles */
+  .photo-upload-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  /* Form Actions Styles */
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 2rem;
+  }
+  
+  .btn {
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+  }
+  
+  .btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+    transform: translateY(-2px);
+  }
+  
+  .btn-outline-secondary:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Review Guidelines Styles */
+  .review-guidelines {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  }
+  
+  .review-guidelines h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+  
+  .guideline-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  
+  .guideline-icon {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(13, 110, 253, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    flex-shrink: 0;
+  }
+  
+  .guideline-icon i {
+    font-size: 1.25rem;
+    color: var(--bs-primary);
+  }
+  
+  .guideline-text h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.25rem;
+  }
+  
+  .guideline-text p {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 0;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 767.98px) {
+    .product-image-container {
+      height: 200px;
+      margin-bottom: 1rem;
+    }
+  
+    .product-title {
+      font-size: 1.25rem;
+    }
+  
+    .product-price {
+      font-size: 1.25rem;
+    }
+  
+    .star-icon {
+      font-size: 1.75rem;
+    }
+  
+    .form-actions {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  
+    .form-actions .btn {
+      width: 100%;
+    }
+  
+    .guideline-item {
+      margin-bottom: 1.5rem;
+    }
+  }
+  
+  @media (max-width: 575.98px) {
+    .product-meta {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  
+    .stars-container {
+      width: 100%;
+      justify-content: space-between;
+    }
+  
+    .star-icon {
+      font-size: 1.5rem;
+    }
+  
+    .review-guidelines h4 {
+      font-size: 1.1rem;
+    }
+  }
+  
+  /* Animation for star rating */
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  .star-icon.active {
+    animation: pulse 0.3s ease-in-out;
+  }
+  
+  

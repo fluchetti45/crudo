@@ -28,6 +28,7 @@ import { ReturnsComponent } from '../components/returns/returns.component';
 import { ShippingComponent } from '../components/shipping/shipping.component';
 import { PendingReviewsComponent } from '../components/pending-reviews/pending-reviews.component';
 import { UiBlockReviewsComponent } from '../components/ui-block-reviews/ui-block-reviews.component';
+import { ReviewFormComponent } from '../components/review-form/review-form.component';
 export const routes: Routes = [
   { path: '', component: HomePageComponent },
   { path: 'categories', component: UiBlockCategoriesComponent },
@@ -70,6 +71,11 @@ export const routes: Routes = [
   {
     path: 'profile/reviews',
     component: UiBlockReviewsComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'profile/pending-review/:id',
+    component: ReviewFormComponent,
     canActivate: [AuthGuard],
   },
   {

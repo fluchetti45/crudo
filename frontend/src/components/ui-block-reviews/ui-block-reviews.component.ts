@@ -11,7 +11,7 @@ import { ProductForReview } from '../../app/models/products/product.interface';
   templateUrl: './ui-block-reviews.component.html',
   styleUrl: './ui-block-reviews.component.css',
 })
-export class UiBlockReviewsComponent implements OnInit, OnDestroy {
+export class UiBlockReviewsComponent implements OnInit {
   private _reviewService = inject(ReviewService);
   public pendingReviews: boolean = true;
 
@@ -19,20 +19,11 @@ export class UiBlockReviewsComponent implements OnInit, OnDestroy {
   productsPendingReview: ProductForReview[] = [];
 
   ngOnInit(): void {
-    if (this.pendingReviews) {
-      this._reviewService.getProductsPendingReview().subscribe((reviews) => {
-        this.productsPendingReview = reviews;
-        console.log(this.productsPendingReview);
-      });
-    } else {
-      this._reviewService.getReviews().subscribe((reviews) => {
-        this.reviews = reviews;
-        console.log(this.reviews);
-      });
-    }
-  }
-  ngOnDestroy(): void {
-    this.productsPendingReview = [];
-    this.reviews = [];
+    this._reviewService.getProductsPendingReview().subscribe((reviews) => {
+      this.productsPendingReview = reviews;
+    });
+    this._reviewService.getReviewsByUser().subscribe((reviews) => {
+      this.reviews = reviews;
+    });
   }
 }

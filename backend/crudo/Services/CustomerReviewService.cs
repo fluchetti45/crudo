@@ -35,7 +35,7 @@ public class CustomerReviewService : ICustomerReviewService
             .ToListAsync();
     }
 
-    public async Task<CustomerReview> CreateReviewAsync(CustomerReview review)
+    public async Task<CustomerReview> CreateReviewAsync(string userId, GenerateReviewDTO review)
     {
         // Validar que el producto existe
         var product = await _context.Products.FindAsync(review.ProductId);
@@ -46,7 +46,7 @@ public class CustomerReviewService : ICustomerReviewService
 
         // Validar que el usuario no haya ya reseñado este producto
         var existingReview = await _context.CustomerReviews
-            .FirstOrDefaultAsync(r => r.UserId == review.UserId && r.ProductId == review.ProductId);
+            .FirstOrDefaultAsync(r => r.UserId == userId && r.ProductId == review.ProductId);
 
         if (existingReview != null)
         {
@@ -59,13 +59,20 @@ public class CustomerReviewService : ICustomerReviewService
             throw new ArgumentException("El rating debe estar entre 1 y 5");
         }
 
-        review.CreatedAt = DateTime.UtcNow;
-        review.UpdatedAt = DateTime.UtcNow;
+        CustomerReview newReview = new CustomerReview
+        {
+            UserId = userId,
+            ProductId = review.ProductId,
+            Rating = review.Rating,
+            Comment = review.Comment,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
 
-        _context.CustomerReviews.Add(review);
+        _context.CustomerReviews.Add(newReview);
         await _context.SaveChangesAsync();
 
-        return review;
+        return newReview;
     }
 
     public async Task UpdateReviewAsync(int id, CustomerReview review)
@@ -169,6 +176,34 @@ public class CustomerReviewService : ICustomerReviewService
                 .Any(r => r.ProductId == o.ProductId && r.UserId == userId))
             .Select(o => o.ProductId)
             .Distinct()
+            .CountAsync();
+    }
+
+    public async Task<IEnumerable<CustomerReview>> GetReviewsByUserAsync(string userId)
+    {
+        return await _context.CustomerReviews
+            .Where(r => r.UserId == userId)
+            .Include(r => r.Product)
+            .Include(r => r.Product.ProductImages)
+            .Select(r => new CustomerReview
+            {
+                Id = r.Id,
+                UserId = r.UserId,
+                ProductId = r.ProductId,
+                Rating = r.Rating,
+                Comment = r.Comment,
+                CreatedAt = r.CreatedAt,
+                FilePathCover = r.Product.ProductImages.FirstOrDefault(i => i.IsCover == true)!.FilePath,
+                ProductName = r.Product.Name
+            })
+            .OrderByDescending(r => r.CreatedAt)
+            .ToListAsync();
+    }
+
+    public async Task<int> GetDoneReviewsCountAsync(string userId)
+    {
+        return await _context.CustomerReviews
+            .Where(r => r.UserId == userId)
             .CountAsync();
     }
 }

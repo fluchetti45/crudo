@@ -12,10 +12,13 @@ public partial class CustomerReview
 
     public string Comment { get; set; } = null!;
 
+    public string FilePathCover { get; set; } = null!;
+
+    public string ProductName { get; set; } = null!;
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
-
     [JsonIgnore]
     public virtual Product Product { get; set; } = null!;
 }

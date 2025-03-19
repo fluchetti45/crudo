@@ -29,6 +29,15 @@ public class CustomerReviewController : ControllerBase
         return Ok(reviews);
     }
 
+    [HttpGet("user")]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<CustomerReview>>> GetReviewsByUser()
+    {
+        string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var reviews = await _reviewService.GetReviewsByUserAsync(userId);
+        return Ok(reviews);
+    }
+
     // GET: api/CustomerReview/5
     [HttpGet("{id}")]
     public async Task<ActionResult<CustomerReview>> GetReview(int id)
@@ -52,12 +61,12 @@ public class CustomerReviewController : ControllerBase
     // POST: api/CustomerReview
     [Authorize]
     [HttpPost]
-    public async Task<ActionResult<CustomerReview>> CreateReview(CustomerReview review)
+    public async Task<ActionResult<CustomerReview>> CreateReview(GenerateReviewDTO review)
     {
         try
         {
-            review.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var createdReview = await _reviewService.CreateReviewAsync(review);
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var createdReview = await _reviewService.CreateReviewAsync(userId, review);
             return CreatedAtAction(nameof(GetReview), new { id = createdReview.Id }, createdReview);
         }
         catch (ArgumentException ex)
@@ -131,13 +140,18 @@ public class CustomerReviewController : ControllerBase
     [HttpGet("pending-count")]
     public async Task<ActionResult<int>> GetPendingReviewsCount()
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userId))
-        {
-            return Unauthorized();
-        }
-
-        var count = await _reviewService.GetPendingReviewsCountAsync(userId);
+        string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        int count = await _reviewService.GetPendingReviewsCountAsync(userId);
         return Ok(count);
     }
+
+    [Authorize]
+    [HttpGet("done-count")]
+    public async Task<ActionResult<int>> GetDoneReviewsCount()
+    {
+        string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        int count = await _reviewService.GetDoneReviewsCountAsync(userId);
+        return Ok(count);
+    }
+
 }
