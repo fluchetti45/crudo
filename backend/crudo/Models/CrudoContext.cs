@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 
 namespace crudo.Models;
 
@@ -32,6 +33,8 @@ public partial class CrudoContext : DbContext
     public virtual DbSet<OrderStatus> OrderStatuses { get; set; }
 
     public virtual DbSet<CustomerReview> CustomerReviews { get; set; }
+
+    public virtual DbSet<WishlistItem> WishlistItems { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -274,6 +277,24 @@ public partial class CrudoContext : DbContext
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__CustomerR__produ__49C3F6B7");
+        });
+
+        modelBuilder.Entity<WishlistItem>(entity =>
+        {
+            entity.ToTable("WishlistItem");
+            entity.HasKey(e => e.Id).HasName("PK__Wishlist__3213E83F8C005E2F");
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd() // Configura la clave primaria para ser autoincremental
+                .HasColumnName("id");
+            entity.Property(e => e.UserId)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("user_id");
+            entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.HasOne(d => d.Product).WithMany(p => p.WishlistItems)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__WishlistI__produ__49C3F6B7");
         });
 
         OnModelCreatingPartial(modelBuilder);

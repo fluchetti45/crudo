@@ -1,0 +1,16 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Wishlist</h1>
+
+      <div *ngIf="wishlistItems$ | async as wishlistItems">
+        <p>Total items: {{ wishlistItems.length }}</p>
+        <div *ngFor="let wishlistItem of wishlistItems">
+          <h2>{{ wishlistItem.name }}</h2>
+          <img [src]="wishlistItem.image" alt="Wishlist Item" />
+          <a [routerLink]="['/product', wishlistItem.productId]">Ver</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

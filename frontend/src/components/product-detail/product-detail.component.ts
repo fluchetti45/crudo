@@ -27,7 +27,11 @@ import { addProduct } from '../../app/state/actions/cart.actions';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from '../../app/state/actions/wishlist.actions';
+import { selectIsInWishlist } from '../../app/state/selectors/wishlist.selectors';
 @Component({
   selector: 'app-product-detail',
   standalone: true,
@@ -59,7 +63,7 @@ export class ProductDetailComponent implements OnInit {
 
   selectedImage: any;
   modalOpen: boolean = false;
-
+  isInWishlist$: Observable<boolean> = new Observable();
   loading$: Observable<boolean> = new Observable();
   relatedProducts$: Observable<Product[]> = new Observable();
   deletedProduct$: Observable<boolean> = new Observable();
@@ -86,6 +90,10 @@ export class ProductDetailComponent implements OnInit {
     } else {
       this.relatedProducts$ = of([]);
     }
+
+    this.isInWishlist$ = this._store.select(
+      selectIsInWishlist(this.product.id)
+    );
 
     this.deletedProduct$.subscribe({
       next: (res) => {
@@ -119,6 +127,19 @@ export class ProductDetailComponent implements OnInit {
     this._router.navigate(['/edit-product', this.product.id]);
   }
 
+  addToWishlist(productId: number) {
+    this.isAuthenticated$.subscribe((isAuthenticated) => {
+      if (!isAuthenticated) {
+        const currentUrl = window.location.pathname + window.location.search;
+        this.auth.loginWithRedirect({
+          appState: { target: currentUrl },
+        });
+        return;
+      }
+      this._store.dispatch(addToWishlist({ productId }));
+    });
+  }
+
   addToCart(productId: number, quantity: string) {
     this.isAuthenticated$.subscribe((isAuthenticated) => {
       if (!isAuthenticated) {
@@ -146,5 +167,18 @@ export class ProductDetailComponent implements OnInit {
 
   getSafeDescription(): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(this.product.description);
+  }
+
+  removeFromWishlist(productId: number) {
+    this.isAuthenticated$.subscribe((isAuthenticated) => {
+      if (!isAuthenticated) {
+        const currentUrl = window.location.pathname + window.location.search;
+        this.auth.loginWithRedirect({
+          appState: { target: currentUrl },
+        });
+        return;
+      }
+      this._store.dispatch(removeFromWishlist({ productId }));
+    });
   }
 }

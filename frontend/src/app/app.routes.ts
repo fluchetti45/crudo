@@ -26,9 +26,10 @@ import { ProductEditComponent } from '../components/product-edit/product-edit.co
 import { UiBlockProductsDetailComponent } from '../components/ui-block-products-detail/ui-block-products-detail.component';
 import { ReturnsComponent } from '../components/returns/returns.component';
 import { ShippingComponent } from '../components/shipping/shipping.component';
-import { PendingReviewsComponent } from '../components/pending-reviews/pending-reviews.component';
+import { WishlistComponent } from '../components/wishlist/wishlist.component';
 import { UiBlockReviewsComponent } from '../components/ui-block-reviews/ui-block-reviews.component';
 import { ReviewFormComponent } from '../components/review-form/review-form.component';
+
 export const routes: Routes = [
   { path: '', component: HomePageComponent },
   { path: 'categories', component: UiBlockCategoriesComponent },
@@ -64,6 +65,11 @@ export const routes: Routes = [
     path: 'edit-product/:id',
     component: ProductEditComponent,
     canActivate: [AuthGuard, adminGuard],
+  },
+  {
+    path: 'wishlist',
+    component: WishlistComponent,
+    canActivate: [AuthGuard],
   },
   { path: 'cart', component: UiBlockCartDetailComponent },
   { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },

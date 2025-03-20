@@ -7,7 +7,7 @@ import { AppState } from './app.state';
 import { getCategories } from './state/actions/categories.actions';
 import { FooterComponent } from '../components/footer/footer.component';
 import { getCartItems } from './state/actions/cart.actions';
-
+import { loadWishlist } from './state/actions/wishlist.actions';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, NavbarComponent, FooterComponent],
@@ -28,8 +28,9 @@ export class AppComponent implements OnInit {
     // Suscribirse al estado de autenticación
     this._authService.isAuthenticated$.subscribe((isAuthenticated) => {
       if (isAuthenticated) {
-        // Si el usuario está autenticado, cargar su carrito
+        // Si el usuario está autenticado, cargar su carrito y wishlist
         this._store.dispatch(getCartItems());
+        this._store.dispatch(loadWishlist());
       }
     });
 

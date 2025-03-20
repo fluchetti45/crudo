@@ -9,11 +9,8 @@ import { Category } from '../../app/models/categories/category.interface';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { AuthService } from '@auth0/auth0-angular';
 import { map } from 'rxjs/operators';
-import { CartItem } from '../../app/models/cart/cartItem.iterface';
-import {
-  selectCartItems,
-  selectTotalItems,
-} from '../../app/state/selectors/cart.selectors';
+
+import { selectTotalItems } from '../../app/state/selectors/cart.selectors';
 
 @Component({
   selector: 'app-navbar',

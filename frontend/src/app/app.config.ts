@@ -23,7 +23,8 @@ import { categoriesReducer } from './state/reducers/categories.reducers';
 import { cartReducer } from './state/reducers/cart.reducers';
 import { CartEffects } from './state/effects/cart.effects';
 import { authInterceptor } from './interceptors/auth.interceptor';
-
+import { wishlistReducer } from './state/reducers/wishlist.reducer';
+import { WishlistEffects } from './state/effects/wishlist.effects';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -48,9 +49,15 @@ export const appConfig: ApplicationConfig = {
       products: productsReducer,
       categories: categoriesReducer,
       cart: cartReducer,
+      wishlist: wishlistReducer,
     }),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
-    provideEffects([ProductsEffects, CategoriesEffects, CartEffects]),
+    provideEffects([
+      ProductsEffects,
+      CategoriesEffects,
+      CartEffects,
+      WishlistEffects,
+    ]),
     provideToastr(),
     provideAnimations(),
   ],

@@ -22,14 +22,19 @@ public partial class Product
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
-    [JsonIgnore]
-    public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
     public virtual Category? Category { get; set; }
+    public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
 
     public virtual ICollection<CustomerReview> CustomerReviews { get; set; } = new List<CustomerReview>();
 
+    [JsonIgnore]
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    [JsonIgnore]
+    public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
-    public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+    [JsonIgnore]
+    public virtual ICollection<WishlistItem> WishlistItems { get; set; } = new List<WishlistItem>();
+
+
 }

@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { ProductReview } from '../../app/models/reviews/productReview.interface';
-import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { DatePipe, NgClass, NgFor } from '@angular/common';
 @Component({
   selector: 'app-product-review',
-  imports: [DatePipe, NgIf, NgFor, NgClass],
+  imports: [DatePipe, NgFor, NgClass],
   templateUrl: './product-review.component.html',
   styleUrl: './product-review.component.css',
 })
