@@ -1,0 +1,130 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1 class="dashboard-title">Dashboard</h1>
+      <p class="dashboard-subtitle">Bienvenido al panel de administración</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary">
+        <i class="bi bi-download me-2"></i>Exportar datos
+      </button>
+    </div>
+  </div>
+
+  <!-- Estado de carga -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner-container">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+    <p class="loading-text">Cargando datos del dashboard...</p>
+  </div>
+
+  <!-- Contenido del dashboard -->
+  <div *ngIf="!loading && response" class="dashboard-content">
+    <!-- Cards de estadísticas -->
+    <div class="stats-cards">
+      <!-- Card de productos -->
+      <div class="stat-card product-card">
+        <div class="card-icon">
+          <i class="bi bi-box-seam"></i>
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">Total de productos</h3>
+          <p class="card-value">{{ response.totalProducts }}</p>
+          <div class="card-footer">
+            <a routerLink="/admin-products" class="card-link">
+              <span>Ver productos</span>
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card de categorías -->
+      <div class="stat-card category-card">
+        <div class="card-icon">
+          <i class="bi bi-tags"></i>
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">Total de categorías</h3>
+          <p class="card-value">{{ response.totalCategories }}</p>
+          <div class="card-footer">
+            <a routerLink="/admin-categories" class="card-link">
+              <span>Ver categorías</span>
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card de pedidos -->
+      <div class="stat-card order-card">
+        <div class="card-icon">
+          <i class="bi bi-cart3"></i>
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">Total de pedidos</h3>
+          <p class="card-value">{{ response.totalOrders }}</p>
+          <div class="card-footer">
+            <a routerLink="/admin-orders" class="card-link">
+              <span>Ver pedidos</span>
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <!-- Card de ventas -->
+      <div class="stat-card sales-card">
+        <div class="card-icon">
+          <i class="bi bi-currency-dollar"></i>
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">Total de ventas</h3>
+          <p class="card-value">{{ response.totalSales | currency }}</p>
+          <div class="card-footer">
+            <a class="card-link">
+              <span>Ver ventas</span>
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grafico de productos por categoría -->
+
+  <
+  <div class="chart-container">
+    <div class="chart-header">
+      <h2 class="chart-title">Productos por Categoría</h2>
+      <div class="chart-actions">
+        <button class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-download me-1"></i>Exportar
+        </button>
+      </div>
+    </div>
+    <div class="chart-body">
+      <canvas #barChart></canvas>
+    </div>
+    <div
+      class="chart-footer"
+      *ngIf="
+        response &&
+        response.productsByCategory &&
+        response.productsByCategory.length > 0
+      "
+    >
+      <div class="chart-info">
+        <span class="info-label">Total de categorías:</span>
+        <span class="info-value">{{ response.productsByCategory.length }}</span>
+      </div>
+      <div class="chart-info">
+        <span class="info-label">Categoría con más productos:</span>
+        <span class="info-value">{{ getTopCategory() }}</span>
+      </div>
+    </div>
+  </div>
+</div>

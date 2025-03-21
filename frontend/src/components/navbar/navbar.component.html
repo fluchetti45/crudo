@@ -92,6 +92,11 @@
             <span class="cart-badge">{{ cartItems$ | async }}</span>
           </a>
         </li>
+        <li *ngIf="isAdmin$ | async" class="nav-item me-3">
+          <a class="nav-link" routerLink="/dashboard">
+            <i class="bi bi-speedometer2 fs-5"></i>
+          </a>
+        </li>
 
         <!-- Menú de usuario -->
         <li class="nav-item dropdown" *ngIf="isAuthenticated$ | async">

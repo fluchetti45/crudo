@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.OpenApi.Models;
 using Crudo.Services;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
 
 // Cargar variables de entorno desde el archivo .env
@@ -31,6 +32,7 @@ var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING"
     builder.Configuration.GetConnectionString("DefaultConnection") ??
     throw new InvalidOperationException("Connection string not found.");
 
+// Registrar el DbContext normal para servicios scoped
 builder.Services.AddDbContext<CrudoContext>(options =>
 {
     options.UseSqlServer(connectionString, sqlServerOptions =>
@@ -41,6 +43,7 @@ builder.Services.AddDbContext<CrudoContext>(options =>
             errorNumbersToAdd: null);
     });
 });
+
 
 // JWT
 var domain = Environment.GetEnvironmentVariable("AUTH0_DOMAIN");
@@ -156,7 +159,7 @@ builder.Services.AddScoped<EmailServices>();
 builder.Services.AddScoped<ShippingDataServices>();
 builder.Services.AddScoped<MailgunService>();
 builder.Services.AddScoped<WishlistService>();
-
+builder.Services.AddScoped<DashboardServices>();
 
 var app = builder.Build();
 
