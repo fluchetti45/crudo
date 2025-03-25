@@ -130,158 +130,166 @@ namespace crudo.Services
 
         public async Task<Result<ReadOrderAdminDTO>> UpdateOrderStatus(int orderId, int newStatusId)
         {
-            try
+            var strategy = _context.Database.CreateExecutionStrategy();
+            return await strategy.ExecuteAsync(async () =>
             {
-                _logger.LogInformation("Actualizando orden {OrderId} a estado {StatusId}", orderId, newStatusId);
-
-                using var transaction = await _context.Database.BeginTransactionAsync();
-
-                var order = await _context.CustomerOrders
-                    .Include(o => o.Status)
-                    .FirstOrDefaultAsync(o => o.Id == orderId);
-
-                if (order == null)
-                    return Result<ReadOrderAdminDTO>.Failure("Orden no encontrada");
-
-                var newStatus = await _context.OrderStatuses.FindAsync(newStatusId);
-                if (newStatus == null)
-                    return Result<ReadOrderAdminDTO>.Failure($"Estado {newStatusId} no encontrado");
-
-                order.StatusId = newStatusId;
-                order.Status = newStatus;
-
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                return Result<ReadOrderAdminDTO>.Success(new ReadOrderAdminDTO
+                try
                 {
-                    Id = order.Id,
-                    Status = order.Status.Name,
-                    StatusId = order.StatusId,
-                    Total = order.Total,
-                    CreatedAt = order.CreatedAt,
-                    UserId = order.UserId,
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error actualizando orden {OrderId}", orderId);
-                return Result<ReadOrderAdminDTO>.Failure($"Error al actualizar: {ex.Message}");
-            }
+                    _logger.LogInformation("Actualizando orden {OrderId} a estado {StatusId}", orderId, newStatusId);
+
+                    using var transaction = await _context.Database.BeginTransactionAsync();
+
+                    var order = await _context.CustomerOrders
+                        .Include(o => o.Status)
+                        .FirstOrDefaultAsync(o => o.Id == orderId);
+
+                    if (order == null)
+                        return Result<ReadOrderAdminDTO>.Failure("Orden no encontrada");
+
+                    var newStatus = await _context.OrderStatuses.FindAsync(newStatusId);
+                    if (newStatus == null)
+                        return Result<ReadOrderAdminDTO>.Failure($"Estado {newStatusId} no encontrado");
+
+                    order.StatusId = newStatusId;
+                    order.Status = newStatus;
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    return Result<ReadOrderAdminDTO>.Success(new ReadOrderAdminDTO
+                    {
+                        Id = order.Id,
+                        Status = order.Status.Name,
+                        StatusId = order.StatusId,
+                        Total = order.Total,
+                        CreatedAt = order.CreatedAt,
+                        UserId = order.UserId,
+                    });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error actualizando orden {OrderId}", orderId);
+                    return Result<ReadOrderAdminDTO>.Failure($"Error al actualizar: {ex.Message}");
+                }
+            });
         }
 
         public async Task<Result<ReadOrderDTO>> CreateOrder(string userId, ShippingDataDTO shippingData)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-
-            try
+            var strategy = _context.Database.CreateExecutionStrategy();
+            return await strategy.ExecuteAsync(async () =>
             {
-                _logger.LogInformation("Creando orden para usuario {UserId}", userId);
+                using var transaction = await _context.Database.BeginTransactionAsync();
 
-                var cart = await _context.Carts
-                    .Include(c => c.CartItems)
-                    .ThenInclude(ci => ci.Product)
-                    .Where(c => c.UserId == userId)
-                    .FirstOrDefaultAsync();
-
-                if (cart == null || !cart.CartItems.Any())
-                    return Result<ReadOrderDTO>.Failure("El carrito está vacío o no existe.");
-
-                if (!await _inventoryService.ValidateStock(cart.CartItems))
-                    return Result<ReadOrderDTO>.Failure("No hay suficiente stock para algunos productos.");
-
-                var total = cart.CartItems.Sum(ci => ci.Product.Price * ci.Quantity);
-
-                var defaultStatus = await _context.OrderStatuses
-                    .FirstOrDefaultAsync(s => s.Name == DEFAULT_STATUS);
-
-                if (defaultStatus == null)
-                    return Result<ReadOrderDTO>.Failure("Estado por defecto no encontrado");
-
-                var order = new CustomerOrder
+                try
                 {
-                    UserId = userId,
-                    StatusId = defaultStatus.Id,
-                    Total = total,
-                    CreatedAt = DateTime.Now,
-                };
+                    _logger.LogInformation("Creando orden para usuario {UserId}", userId);
 
-                // Crear o asociar la dirección de envío
-                if (shippingData.Id == null)
-                {
-                    var newShippingData = new ShippingDatum
+                    var cart = await _context.Carts
+                        .Include(c => c.CartItems)
+                        .ThenInclude(ci => ci.Product)
+                        .Where(c => c.UserId == userId)
+                        .FirstOrDefaultAsync();
+
+                    if (cart == null || !cart.CartItems.Any())
+                        return Result<ReadOrderDTO>.Failure("El carrito está vacío o no existe.");
+
+                    if (!await _inventoryService.ValidateStock(cart.CartItems))
+                        return Result<ReadOrderDTO>.Failure("No hay suficiente stock para algunos productos.");
+
+                    var total = cart.CartItems.Sum(ci => ci.Product.Price * ci.Quantity);
+
+                    var defaultStatus = await _context.OrderStatuses
+                        .FirstOrDefaultAsync(s => s.Name == DEFAULT_STATUS);
+
+                    if (defaultStatus == null)
+                        return Result<ReadOrderDTO>.Failure("Estado por defecto no encontrado");
+
+                    var order = new CustomerOrder
                     {
-                        FirstName = shippingData.FirstName,
-                        LastName = shippingData.LastName,
-                        City = shippingData.City,
-                        PostalCode = shippingData.PostalCode,
-                        Email = shippingData.Email,
-                        Country = shippingData.Country,
-                        Address = shippingData.Address,
+                        UserId = userId,
+                        StatusId = defaultStatus.Id,
+                        Total = total,
+                        CreatedAt = DateTime.Now,
                     };
-                    _context.ShippingData.Add(newShippingData);
+
+                    // Crear o asociar la dirección de envío
+                    if (shippingData.Id == null)
+                    {
+                        var newShippingData = new ShippingDatum
+                        {
+                            FirstName = shippingData.FirstName,
+                            LastName = shippingData.LastName,
+                            City = shippingData.City,
+                            PostalCode = shippingData.PostalCode,
+                            Email = shippingData.Email,
+                            Country = shippingData.Country,
+                            Address = shippingData.Address,
+                        };
+                        _context.ShippingData.Add(newShippingData);
+                        await _context.SaveChangesAsync();
+                        order.IdShippingData = newShippingData.Id;
+                    }
+                    else
+                    {
+                        order.IdShippingData = (int)shippingData.Id;
+                    }
+
+                    _context.CustomerOrders.Add(order);
                     await _context.SaveChangesAsync();
-                    order.IdShippingData = newShippingData.Id;
+
+                    var orderItems = cart.CartItems.Select(item => new OrderItem
+                    {
+                        OrderId = order.Id,
+                        ProductId = item.ProductId,
+                        Quantity = item.Quantity,
+                        Price = item.Product.Price
+                    }).ToList();
+
+                    if (!await _inventoryService.ValidateAndUpdateStock(orderItems))
+                    {
+                        await transaction.RollbackAsync();
+                        return Result<ReadOrderDTO>.Failure("Error al actualizar el stock de los productos");
+                    }
+
+                    _context.OrderItems.AddRange(orderItems);
+                    await _context.SaveChangesAsync();
+
+                    _context.CartItems.RemoveRange(cart.CartItems);
+                    await _context.SaveChangesAsync();
+
+                    var result = new ReadOrderDTO
+                    {
+                        Id = order.Id,
+                        Status = defaultStatus.Name,
+                        Total = order.Total,
+                        CreatedAt = order.CreatedAt,
+                        ShippingData = await _context.ShippingData.FindAsync(order.IdShippingData),
+                        Items = orderItems.Select(oi => new ReadOrderItemDTO
+                        {
+                            ProductId = oi.ProductId,
+                            Quantity = oi.Quantity,
+                            Price = oi.Price,
+                            Subtotal = oi.Price * oi.Quantity,
+                            ProductName = oi.Product.Name,
+                            ProductImage = oi.Product.ProductImages
+                                .Where(pi => pi.IsCover)
+                                .Select(pi => pi.FilePath)
+                                .FirstOrDefault() ?? DEFAULT_IMAGE_URL
+                        }).ToList()
+                    };
+
+                    await transaction.CommitAsync();
+                    _logger.LogInformation("Orden {OrderId} creada exitosamente", order.Id);
+                    return Result<ReadOrderDTO>.Success(result);
                 }
-                else
-                {
-                    order.IdShippingData = (int)shippingData.Id;
-                }
-
-                _context.CustomerOrders.Add(order);
-                await _context.SaveChangesAsync();
-
-                var orderItems = cart.CartItems.Select(item => new OrderItem
-                {
-                    OrderId = order.Id,
-                    ProductId = item.ProductId,
-                    Quantity = item.Quantity,
-                    Price = item.Product.Price
-                }).ToList();
-
-                if (!await _inventoryService.ValidateAndUpdateStock(orderItems))
+                catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    return Result<ReadOrderDTO>.Failure("Error al actualizar el stock de los productos");
+                    _logger.LogError(ex, "Error creando orden para usuario {UserId}", userId);
+                    return Result<ReadOrderDTO>.Failure($"Error al crear la orden: {ex.Message}");
                 }
-
-                _context.OrderItems.AddRange(orderItems);
-                await _context.SaveChangesAsync();
-
-                _context.CartItems.RemoveRange(cart.CartItems);
-                await _context.SaveChangesAsync();
-
-                var result = new ReadOrderDTO
-                {
-                    Id = order.Id,
-                    Status = defaultStatus.Name,
-                    Total = order.Total,
-                    CreatedAt = order.CreatedAt,
-                    ShippingData = await _context.ShippingData.FindAsync(order.IdShippingData),
-                    Items = orderItems.Select(oi => new ReadOrderItemDTO
-                    {
-                        ProductId = oi.ProductId,
-                        Quantity = oi.Quantity,
-                        Price = oi.Price,
-                        Subtotal = oi.Price * oi.Quantity,
-                        ProductName = oi.Product.Name,
-                        ProductImage = oi.Product.ProductImages
-                            .Where(pi => pi.IsCover)
-                            .Select(pi => pi.FilePath)
-                            .FirstOrDefault() ?? DEFAULT_IMAGE_URL
-                    }).ToList()
-                };
-
-                await transaction.CommitAsync();
-                _logger.LogInformation("Orden {OrderId} creada exitosamente", order.Id);
-                return Result<ReadOrderDTO>.Success(result);
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                _logger.LogError(ex, "Error creando orden para usuario {UserId}", userId);
-                return Result<ReadOrderDTO>.Failure($"Error al crear la orden: {ex.Message}");
-            }
+            });
         }
 
         public async Task<Result<ReadOrderDTO>> GetOrder(string userId, int orderId, bool isAdmin)

@@ -17,7 +17,6 @@ export const adminGuard: CanActivateFn = (route, state) => {
         router.navigate(['/']);
         return false;
       }
-      console.log('SOS ADMIN: ', user);
       return true;
     })
   );

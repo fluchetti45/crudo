@@ -15,6 +15,7 @@ import { OrdersService } from '../../services/order.service';
 import { Status } from '../../app/models/status/status.interface';
 import { StatusService } from '../../services/status.service';
 import { OrderUtils } from '../../utils/order-utils';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-ui-block-orders-detail',
@@ -39,7 +40,8 @@ export class UiBlockOrdersDetailComponent implements AfterViewInit {
   constructor(
     private formBuilder: FormBuilder,
     private _order: OrdersService,
-    private _status: StatusService
+    private _status: StatusService,
+    private _toastr: ToastrService
   ) {
     this.filterForm = this.formBuilder.group({
       status: [''],
@@ -57,10 +59,12 @@ export class UiBlockOrdersDetailComponent implements AfterViewInit {
 
     this._status.getStatuses().subscribe({
       next: (res) => {
-        console.log(res);
         this.statuses = res;
       },
-      error: (err) => console.log(err),
+      error: (err) => {
+        this._toastr.error('Error al cargar los estados', 'Error');
+        console.log(err);
+      },
     });
 
     // Suscribirse a cambios en el filtro
@@ -72,12 +76,14 @@ export class UiBlockOrdersDetailComponent implements AfterViewInit {
   loadOrders(statusId: number | null) {
     this._order.getOrdersAdmin(statusId, this.currentPage).subscribe({
       next: (res) => {
-        console.log(res);
         this.orders = res.items;
         this.totalPages = res.totalPages;
         this.total = res.total;
       },
-      error: (err) => console.log(err),
+      error: (err) => {
+        this._toastr.error('Error al cargar las órdenes', 'Error');
+        console.log(err);
+      },
     });
   }
 
@@ -89,7 +95,10 @@ export class UiBlockOrdersDetailComponent implements AfterViewInit {
     const searchTerm = this.searchForm.get('searchTerm')?.value;
     this._order.getUserOrdersAdmin(searchTerm).subscribe({
       next: (res) => (this.orders = res),
-      error: (err) => console.log(err),
+      error: (err) => {
+        this._toastr.error('Error al cargar las órdenes', 'Error');
+        console.log(err);
+      },
     });
   }
 
@@ -123,9 +132,13 @@ export class UiBlockOrdersDetailComponent implements AfterViewInit {
           // Recargar las órdenes con el filtro actual
           const currentStatusId = this.filterForm.get('status')?.value;
           this.loadOrders(currentStatusId ? Number(currentStatusId) : null);
+          this._toastr.success('Orden actualizada correctamente', 'Exito');
           this.modal.hide();
         },
-        error: (err) => console.log(err),
+        error: (err) => {
+          this._toastr.error('Error al actualizar la orden', 'Error');
+          console.log(err);
+        },
       });
     }
   }
