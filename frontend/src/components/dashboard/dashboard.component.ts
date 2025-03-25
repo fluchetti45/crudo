@@ -8,23 +8,13 @@ import {
 } from '@angular/core';
 import { DashboardService } from '../../services/dashboard.service';
 import { NgIf, CurrencyPipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
-
-interface ProductsByCategoryCount {
-  categoryId: number;
-  categoryName: string;
-  totalProducts: number;
-}
-
-interface DashboardResponse {
-  totalProducts: number;
-  totalCategories: number;
-  totalOrders: number;
-  totalSales: number;
-  productsByCategory: ProductsByCategoryCount[];
-}
-
+import { ProductsCategoryCount } from '../../app/models/dashboard/products-category-count.interface';
+import { TopProduct } from '../../app/models/dashboard/top-product.interface';
+import { TopCategory } from '../../app/models/dashboard/top-category.interface';
+import { OrderStatus } from '../../app/models/dashboard/order-status.interface';
+import { DashboardResponse } from '../../app/models/dashboard/dashboard-response.interface';
 @Component({
   selector: 'app-dashboard',
   imports: [NgIf, RouterLink, CurrencyPipe],
@@ -33,11 +23,19 @@ interface DashboardResponse {
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('barChart') barChart!: ElementRef;
+  @ViewChild('pieChart') pieChart!: ElementRef;
+  @ViewChild('topCategoriesChart') topCategoriesChart!: ElementRef;
+  @ViewChild('orderStatusChart') orderStatusChart!: ElementRef;
+
   private _dashboardService = inject(DashboardService);
+  private _router = inject(Router);
   loading: boolean = true;
   response: DashboardResponse | null = null;
   error: any;
-  chart: any;
+  barChartObject: any;
+  pieChartObject: any;
+  topCategoriesChartObject: any;
+  orderStatusChartObject: any;
   createdChart: boolean = false;
   chartColors = [
     'rgba(67, 97, 238, 0.7)',
@@ -63,23 +61,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.response = res;
         this.loading = false;
-        this.createChart(res.productsByCategory);
+        this.createBarChart(res.productsByCategory);
+        this.createPieChart(res.topProducts);
+        this.createTopCategoriesChart(res.topCategories);
+        this.createOrderStatusChart(res.orderStatus);
       },
       error: (error) => {
         this.loading = false;
         this.error = error;
-        console.log(error);
       },
     });
   }
 
   ngOnDestroy(): void {
-    if (this.chart) {
-      this.chart.destroy();
+    if (this.barChartObject || this.pieChartObject) {
+      this.barChartObject.destroy();
+      this.pieChartObject.destroy();
+      this.topCategoriesChartObject.destroy();
+      this.orderStatusChartObject.destroy();
     }
   }
 
-  createChart(data: ProductsByCategoryCount[]) {
+  createBarChart(data: ProductsCategoryCount[]) {
     const labels = data.map((product) => product.categoryName);
     const values = data.map((product) => product.totalProducts);
     const ctx = this.barChart.nativeElement.getContext('2d');
@@ -109,6 +112,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        onClick: (event, elements) => {
+          if (elements.length > 0) {
+            const index = elements[0].index;
+            const categoryId = data[index].categoryId;
+            this._router.navigate(['/category', categoryId]);
+          }
+        },
         scales: {
           y: {
             beginAtZero: true,
@@ -176,7 +186,125 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
     };
 
-    this.chart = new Chart(ctx, config);
+    this.barChartObject = new Chart(ctx, config);
+    this.createdChart = true;
+  }
+
+  //
+  createPieChart(data: TopProduct[]) {
+    const labels = data.map((product) => product.productName);
+    const values = data.map((product) => product.totalSold);
+    const ctx = this.pieChart.nativeElement.getContext('2d');
+    const backgroundColors = this.generateColors(data.length);
+    const borderColors = backgroundColors.map((color) =>
+      color.replace('0.7', '1')
+    );
+    const config: ChartConfiguration = {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            data: values,
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
+            borderWidth: 1,
+            borderRadius: 6,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        onClick: (event, elements) => {
+          if (elements.length > 0) {
+            const index = elements[0].index;
+            const productId = data[index].productId;
+            this._router.navigate(['/product', productId]);
+          }
+        },
+      },
+    };
+
+    this.pieChartObject = new Chart(ctx, config);
+    this.createdChart = true;
+  }
+
+  createTopCategoriesChart(data: TopCategory[]) {
+    const labels = data.map((category) => category.categoryName);
+    const values = data.map((category) => category.totalSales);
+    const ctx = this.topCategoriesChart.nativeElement.getContext('2d');
+    const backgroundColors = this.generateColors(data.length);
+    const borderColors = backgroundColors.map((color) =>
+      color.replace('0.7', '1')
+    );
+    const config: ChartConfiguration = {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            data: values,
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
+            borderWidth: 1,
+            borderRadius: 6,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        onClick: (event, elements) => {
+          if (elements.length > 0) {
+            const index = elements[0].index;
+            const categoryId = data[index].categoryId;
+            this._router.navigate(['/category', categoryId]);
+          }
+        },
+      },
+    };
+
+    this.topCategoriesChartObject = new Chart(ctx, config);
+    this.createdChart = true;
+  }
+
+  createOrderStatusChart(data: OrderStatus[]) {
+    const labels = data.map((order) => order.status);
+    const values = data.map((order) => order.totalOrders);
+    const ctx = this.orderStatusChart.nativeElement.getContext('2d');
+    const backgroundColors = this.generateColors(data.length);
+    const borderColors = backgroundColors.map((color) =>
+      color.replace('0.7', '1')
+    );
+    const config: ChartConfiguration = {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            data: values,
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
+            borderWidth: 1,
+            borderRadius: 6,
+            maxBarThickness: 50,
+            minBarLength: 5,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+      },
+    };
+    this.orderStatusChartObject = new Chart(ctx, config);
     this.createdChart = true;
   }
 

@@ -96,10 +96,9 @@
 
   <!-- Grafico de productos por categoría -->
 
-  <
-  <div class="chart-container">
+  <div class="chart-container container">
     <div class="chart-header">
-      <h2 class="chart-title">Productos por Categoría</h2>
+      <h2 class="chart-title text-center">Productos por Categoría</h2>
       <div class="chart-actions">
         <button class="btn btn-sm btn-outline-secondary">
           <i class="bi bi-download me-1"></i>Exportar
@@ -126,5 +125,40 @@
         <span class="info-value">{{ getTopCategory() }}</span>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- AL LADO-->
+
+<!-- Contenedor para los gráficos -->
+<div class="charts-container d-flex justify-content-between container">
+  <!-- Grafico de productos más vendidos -->
+  <div class="chart-container container">
+    <div class="chart-header">
+      <h2 class="chart-title text-center">Productos más vendidos</h2>
+    </div>
+    <div class="chart-body">
+      <canvas #pieChart></canvas>
+    </div>
+  </div>
+
+  <!-- Grafico de categorias más vendidas -->
+  <div class="chart-container container">
+    <div class="chart-header">
+      <h2 class="chart-title text-center">Categorías más vendidas</h2>
+    </div>
+    <div class="chart-body">
+      <canvas #topCategoriesChart></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Grafico de estados de pedidos -->
+<div class="chart-container container">
+  <div class="chart-header">
+    <h2 class="chart-title text-center">Estados de pedidos</h2>
+  </div>
+  <div class="chart-body">
+    <canvas #orderStatusChart></canvas>
   </div>
 </div>

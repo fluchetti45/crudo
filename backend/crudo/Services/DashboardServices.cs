@@ -25,6 +25,9 @@ namespace crudo.Services
             var totalOrders = await GetTotalOrdersAsync();
             var productsByCategory = await GetTotalProductsByCategoryAsync();
             var totalSales = await GetTotalSalesAsync();
+            var topProducts = await GetTopFiveProductsAsync();
+            var topCategories = await GetTopFiveCategoriesAsync();
+            var orderStatus = await GetOrderStatusAsync();
 
             return new DashboardData
             {
@@ -32,7 +35,10 @@ namespace crudo.Services
                 TotalCategories = totalCategories,
                 TotalOrders = totalOrders,
                 ProductsByCategory = productsByCategory,
-                TotalSales = totalSales
+                TotalSales = totalSales,
+                TopProducts = topProducts,
+                TopCategories = topCategories,
+                OrderStatus = orderStatus
             };
         }
 
@@ -66,28 +72,6 @@ namespace crudo.Services
             }
         }
 
-        public async Task<List<ProductsByCategoryCount>> GetTotalProductsByCategoryAsync()
-        {
-            _logger.LogInformation("Obteniendo total de productos por categoría");
-
-            try
-            {
-                var productsByCategory = await _context.Categories
-                    .Select(category => new ProductsByCategoryCount
-                    {
-                        CategoryId = category.Id,
-                        CategoryName = category.Name,
-                        TotalProducts = _context.Products.Count(p => p.CategoryId == category.Id)
-                    }).OrderByDescending(p => p.TotalProducts).ToListAsync();
-                return productsByCategory;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Error al obtener el total de productos por categoría {ex}", ex);
-                throw new Exception("Error al obtener el total de productos por categoría", ex);
-            }
-        }
-
         public async Task<int> GetTotalCategoriesAsync()
         {
             _logger.LogInformation("Obteniendo total de categorías");
@@ -118,5 +102,132 @@ namespace crudo.Services
                 throw new Exception("Error al obtener el total de pedidos", ex);
             }
         }
+
+        public async Task<List<ProductsByCategoryCount>> GetTotalProductsByCategoryAsync()
+        {
+            _logger.LogInformation("Obteniendo total de productos por categoría");
+
+            try
+            {
+                var productsByCategory = await _context.Categories
+                    .Select(category => new ProductsByCategoryCount
+                    {
+                        CategoryId = category.Id,
+                        CategoryName = category.Name,
+                        TotalProducts = _context.Products.Count(p => p.CategoryId == category.Id)
+                    }).OrderByDescending(p => p.TotalProducts).ToListAsync();
+                return productsByCategory;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error al obtener el total de productos por categoría {ex}", ex);
+                throw new Exception("Error al obtener el total de productos por categoría", ex);
+            }
+        }
+
+        // Top 5 productos más vendidos
+        public async Task<List<TopProduct>> GetTopFiveProductsAsync()
+        {
+            _logger.LogInformation("Obteniendo los 5 productos más vendidos");
+            try
+            {
+                var topProducts = await _context.OrderItems
+                    .GroupBy(o => o.ProductId)
+                    .Select(g => new
+                    {
+                        ProductId = g.Key,
+                        TotalSold = g.Sum(o => o.Quantity)
+                    })
+                    .Join(
+                        _context.Products,
+                        o => o.ProductId,
+                        p => p.Id,
+                        (o, p) => new TopProduct
+                        {
+                            ProductId = p.Id,
+                            ProductName = p.Name,
+                            TotalSold = o.TotalSold
+                        }
+                    )
+                    .OrderByDescending(p => p.TotalSold)
+                    .Take(5)
+                    .ToListAsync();
+
+                return topProducts;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error al obtener los 5 productos más vendidos {ex}", ex);
+                throw new Exception("Error al obtener los 5 productos más vendidos", ex);
+            }
+        }
+
+        // Categorias mas vendidas
+        public async Task<List<TopCategory>> GetTopFiveCategoriesAsync()
+        {
+            try
+            {
+                var topCategories = await _context.OrderItems
+                    .GroupBy(o => o.Product.CategoryId)
+                    .Select(g => new
+                    {
+                        CategoryId = g.Key,
+                        TotalSales = g.Sum(o => o.Quantity)
+                    })
+                    .Join(
+                        _context.Categories,
+                        o => o.CategoryId,
+                        c => c.Id,
+                        (o, c) => new TopCategory
+                        {
+                            CategoryId = c.Id,
+                            CategoryName = c.Name,
+                            TotalSales = o.TotalSales
+                        }
+                    )
+                    .OrderByDescending(c => c.TotalSales)
+                    .Take(5)
+                    .ToListAsync();
+
+                return topCategories;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error al obtener las categorias más vendidas {ex}", ex);
+                throw new Exception("Error al obtener las categorias más vendidas", ex);
+            }
+
+        }
+
+        // Estados de pedidos
+        public async Task<List<OrderCount>> GetOrderStatusAsync()
+        {
+            try
+            {
+                var orderStatus = await _context.CustomerOrders
+                    .GroupBy(o => o.StatusId)
+                    .Select(g => new OrderCount
+                    {
+                        StatusId = g.Key,
+                        Status = g.First().Status.Name,
+                        TotalOrders = g.Count()
+                    }).OrderByDescending(o => o.TotalOrders)
+                    .ToListAsync();
+                return orderStatus;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error al obtener los estados de pedidos {ex}", ex);
+                throw new Exception("Error al obtener los estados de pedidos", ex);
+            }
+        }
+
+
+        // Ventas por fecha
+        //SELECT CAST(created_at AS DATE) AS fecha, COUNT(DISTINCT(id)) AS ventas FROM CustomerOrder GROUP BY CAST(created_at AS Date)
+        //ORDER BY ventas DESC;
+
+
+
     }
 }

@@ -96,18 +96,43 @@ namespace crudo.Services
 
         public async Task<IEnumerable<ProductImage>> GetProductImages(int productId)
         {
-            var images = await _context.ProductImages.Where(im => im.ProductId == productId).ToListAsync();
-            return images;
+            _logger.LogInformation($"Iniciando búsqueda de imágenes para el producto {productId}");
+            try
+            {
+                var images = await _context.ProductImages.Where(im => im.ProductId == productId).ToListAsync();
+                _logger.LogInformation($"Se encontraron {images.Count} imágenes para el producto {productId}");
+                return images;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener las imágenes del producto");
+                throw;
+            }
         }
 
         public async Task<ProductImage> GetProductImage(int productId, int imageId)
         {
-            var image = await _context.ProductImages.Where(im => im.Id == imageId).FirstOrDefaultAsync();
-            return image;
+            _logger.LogInformation($"Iniciando búsqueda de imagen {imageId} para el producto {productId}");
+            try
+            {
+                var image = await _context.ProductImages.Where(im => im.Id == imageId).FirstOrDefaultAsync();
+                if (image == null)
+                {
+                    _logger.LogError("Imagen no encontrada");
+                    throw new Exception("Imagen no encontrada");
+                }
+                return image;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener la imagen del producto");
+                throw;
+            }
         }
 
         public async Task<bool> DeleteProductImage(int imageId)
         {
+            _logger.LogInformation($"Iniciando eliminación de imagen {imageId}");
             try
             {
                 var image = await _context.ProductImages.FirstOrDefaultAsync(im => im.Id == imageId);
@@ -130,49 +155,69 @@ namespace crudo.Services
 
                 return false;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error durante la eliminación de la imagen");
                 return false;
             }
         }
 
         public async Task<bool> UpdateProductImageCover(int productId, int imageId)
         {
-            var cover = await _context.ProductImages.Where(im => im.ProductId == productId && im.IsCover == true).FirstOrDefaultAsync();
-            if (cover != null)
+            _logger.LogInformation($"Iniciando actualización de imagen de portada para el producto {productId}");
+            try
             {
-                cover.IsCover = false;
-                _context.ProductImages.Update(cover);
-                await _context.SaveChangesAsync();
+                var cover = await _context.ProductImages.Where(im => im.ProductId == productId && im.IsCover == true).FirstOrDefaultAsync();
+                if (cover != null)
+                {
+                    cover.IsCover = false;
+                    _context.ProductImages.Update(cover);
+                    await _context.SaveChangesAsync();
+                }
+                var newCover = await _context.ProductImages.Where(im => im.Id == imageId).FirstOrDefaultAsync();
+                if (newCover != null)
+                {
+                    newCover.IsCover = true;
+                    _context.ProductImages.Update(newCover);
+                    var result = await _context.SaveChangesAsync();
+                    return result > 0;
+                }
+                return false;
             }
-            var newCover = await _context.ProductImages.Where(im => im.Id == imageId).FirstOrDefaultAsync();
-            if (newCover != null)
+            catch (Exception ex)
             {
-                newCover.IsCover = true;
-                _context.ProductImages.Update(newCover);
-                var result = await _context.SaveChangesAsync();
-                return result > 0;
+                _logger.LogError(ex, "Error durante la actualización de la imagen de portada");
+                return false;
             }
-            return false;
         }
 
         public async Task<bool> DeleteProductImages(IEnumerable<ProductImage> images)
         {
+
+            _logger.LogInformation($"Iniciando eliminación de {images.Count()} imágenes");
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                var deleteTasks = new List<Task>();
+
                 foreach (var image in images)
                 {
                     var publicId = "CRUDO/products/" + image.FilePath.Split('/').Last().Split('.').First();
                     var deleteParams = new DeletionParams(publicId);
-                    await _cloudinary.DestroyAsync(deleteParams);
+                    deleteTasks.Add(_cloudinary.DestroyAsync(deleteParams));
                 }
+
+                await Task.WhenAll(deleteTasks);
 
                 _context.ProductImages.RemoveRange(images);
                 var dbResult = await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
                 return dbResult > 0;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "Error durante la eliminación de las imágenes");
                 return false;
             }
         }
