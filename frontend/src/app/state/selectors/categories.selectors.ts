@@ -15,6 +15,11 @@ export const selectCategoryList = createSelector(
   (state: CategoriesState) => state.categories
 );
 
+export const selectTopCategories = createSelector(
+  selectCategoriesFeature,
+  (state: CategoriesState) => state.topCategories
+);
+
 export const selectCategorytDetail = createSelector(
   selectCategoriesFeature,
   (state: CategoriesState) => state.categoryDetail

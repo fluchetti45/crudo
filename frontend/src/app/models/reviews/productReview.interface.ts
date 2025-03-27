@@ -6,3 +6,9 @@ export interface ProductReview {
   rating: number;
   createdAt: Date;
 }
+
+export interface ProductReviewSummary {
+  averageRating: number;
+  totalReviews: number;
+  reviews: ProductReview[];
+}

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Category } from '../app/models/categories/category.interface';
 import { environment } from '../environments/environment';
 import { UpdateCategory } from '../app/models/categories/updateCategory.interface';
-
+import { TopCategory } from '../app/models/categories/topCategory.interface';
 @Injectable({
   providedIn: 'root',
 })
@@ -14,6 +14,10 @@ export class CategoriesService {
 
   getCategories(): Observable<Category[]> {
     return this._http.get<Category[]>(this._url);
+  }
+
+  getTopCategories(): Observable<TopCategory[]> {
+    return this._http.get<TopCategory[]>(`${this._url}/top`);
   }
 
   getCategory(categoryId: number): Observable<Category> {

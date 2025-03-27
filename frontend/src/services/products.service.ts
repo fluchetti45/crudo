@@ -17,6 +17,10 @@ export class ProductService {
     return this._http.get<Product[]>(this.url);
   }
 
+  getTopProducts(): Observable<Product[]> {
+    return this._http.get<Product[]>(`${this.url}/top`);
+  }
+
   getProductsAdmin(
     page: number = 1,
     pageSize: number = 10

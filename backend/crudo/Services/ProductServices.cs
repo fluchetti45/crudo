@@ -317,5 +317,43 @@ namespace crudo.Services
                 return null;
             }
         }
+
+        public async Task<IEnumerable<ReadProductDTO>> GetTopProducts()
+        {
+            try
+            {
+                // Obtengo los productos mas vendidos con un join directo
+                IEnumerable<ReadProductDTO> orderedProducts = await _context.OrderItems
+                    .GroupBy(o => o.ProductId)
+                    .Select(g => new { ProductId = g.Key, TotalQuantity = g.Sum(o => o.Quantity) })
+                    .OrderByDescending(g => g.TotalQuantity)
+                    .Take(8)
+                    .Join(
+                        _context.Products,
+                        top => top.ProductId,
+                        product => product.Id,
+                        (top, product) => new ReadProductDTO
+                        {
+                            Id = product.Id,
+                            Name = product.Name,
+                            Description = product.Description,
+                            Price = product.Price,
+                            Stock = product.Stock,
+                            CreatedAt = product.CreatedAt,
+                            filePathCover = product.ProductImages
+                                .Where(pi => pi.IsCover == true)
+                                .Select(pi => pi.FilePath)
+                                .FirstOrDefault() ?? this.CoverPlaceholder
+                        }
+                    )
+                    .ToListAsync();
+
+                return orderedProducts;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

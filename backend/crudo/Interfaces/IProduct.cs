@@ -7,6 +7,8 @@ namespace crudo.Interfaces
     {
         public Task<IEnumerable<ReadProductDTO>> GetProducts();
 
+        public Task<IEnumerable<ReadProductDTO>> GetTopProducts();
+
         public Task<IEnumerable<ReadProductDTO>> GetProductsByCategory(int categoryId);
 
         public Task<Product> GetProduct(int productId);

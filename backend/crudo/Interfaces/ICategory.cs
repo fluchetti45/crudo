@@ -8,6 +8,8 @@ namespace crudo.Interfaces
         public Task<ReadCategoryDTO> GetCategory(int categoryId);
         public Task<IEnumerable<ReadCategoryDTO>> GetCategories();
 
+        public Task<IEnumerable<TopCategoryDTO>> GetTopCategories();
+
         public Task<bool> DeleteCategory(int categoryId);
 
         public Task<Category> EditCategory(EditCategoryDTO categoryDTO);

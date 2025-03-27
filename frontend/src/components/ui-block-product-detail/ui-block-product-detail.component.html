@@ -12,9 +12,12 @@
         [product]="product"
       ></app-product-detail>
       <!-- Cargar las reviews del producto -->
-      <div *ngIf="reviews.length > 0">
-        <h3>Reviews</h3>
-        <div *ngFor="let review of reviews">
+      <div *ngIf="reviews.totalReviews > 0">
+        <h3>
+          Reviews disponibles ({{ reviews.totalReviews }}). Rating promedio
+          {{ reviews.averageRating }}
+        </h3>
+        <div *ngFor="let review of reviews.reviews">
           <app-product-review [review]="review"></app-product-review>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import { Category } from '../../models/categories/category.interface';
 import { UpdateCategory } from '../../models/categories/updateCategory.interface';
+import { TopCategory } from '../../models/categories/topCategory.interface';
 
 // Get all categories
 export const getCategories = createAction('[Category List] Get categories');
@@ -14,6 +15,23 @@ export const getCategoriesSuccess = createAction(
 // Get all categories error
 export const getCategoriesError = createAction(
   '[Category List] Get categories error',
+  props<{ error: 'Ocurrio un error' }>()
+);
+
+// Get top categories
+export const getTopCategories = createAction(
+  '[Category List] Get top categories'
+);
+
+// Get top categories success
+export const getTopCategoriesSuccess = createAction(
+  '[Category List] Get top categories success',
+  props<{ topCategories: TopCategory[] }>()
+);
+
+// Get top categories error
+export const getTopCategoriesError = createAction(
+  '[Category List] Get top categories error',
   props<{ error: 'Ocurrio un error' }>()
 );
 

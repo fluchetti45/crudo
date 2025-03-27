@@ -106,5 +106,40 @@ namespace crudo.Services
                 return false;
             }
         }
+
+        public async Task<IEnumerable<TopCategoryDTO>> GetTopCategories()
+        {
+            try
+            {
+                var topCategories = await _context.OrderItems
+                    .GroupBy(o => o.ProductId)
+                    .Select(g => new
+                    {
+                        ProductId = g.Key,
+                        TotalQuantity = g.Sum(o => o.Quantity)
+                    })
+                    .OrderByDescending(g => g.TotalQuantity)
+                    .Join(
+                        _context.Products,
+                        top => top.ProductId,
+                        product => product.Id,
+                        (top, product) => new TopCategoryDTO
+                        {
+                            Id = product.CategoryId,
+                            Name = product.Category.Name,
+                            TotalQuantity = top.TotalQuantity
+                        })
+                    .GroupBy(c => c.Id)
+                    .OrderByDescending(c => c.Max(x => x.TotalQuantity))
+                    .Select(g => g.First())
+                    .Take(4)
+                    .ToListAsync();
+                return topCategories;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

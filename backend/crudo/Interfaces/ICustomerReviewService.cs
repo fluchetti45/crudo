@@ -7,7 +7,7 @@ public interface ICustomerReviewService
 {
     Task<IEnumerable<CustomerReview>> GetAllReviewsAsync();
     Task<GetReviewDTO?> GetReviewByIdAsync(int id);
-    Task<IEnumerable<GetProductReviewDTO>> GetProductReviewsAsync(int productId);
+    Task<ProductReviewSummary> GetProductReviewsAsync(int productId);
 
     Task<IEnumerable<GetReviewDTO>> GetReviewsByUserAsync(string userId);
     Task<CustomerReview> CreateReviewAsync(string userId, GenerateReviewDTO review);

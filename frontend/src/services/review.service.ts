@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ProductForReview } from '../app/models/products/product.interface';
 import { CustomerReview } from '../app/models/reviews/customerReview.interface';
 import { GenerateReview } from '../app/models/reviews/generateReview.interface';
-import { ProductReview } from '../app/models/reviews/productReview.interface';
+import { ProductReviewSummary } from '../app/models/reviews/productReview.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -44,7 +44,9 @@ export class ReviewService {
     return this._http.delete<void>(`${this._url}/${reviewId}`);
   }
 
-  getProductReviews(productId: string): Observable<ProductReview[]> {
-    return this._http.get<ProductReview[]>(`${this._url}/product/${productId}`);
+  getProductReviews(productId: string): Observable<ProductReviewSummary> {
+    return this._http.get<ProductReviewSummary>(
+      `${this._url}/product/${productId}`
+    );
   }
 }

@@ -23,7 +23,7 @@
   <!-- Featured Products -->
   <section class="featured-products mb-5">
     <div class="container">
-      <h2 class="text-center mb-4">Productos Destacados</h2>
+      <h2 class="text-center mb-4">Productos más vendidos</h2>
       <ng-container *ngIf="!(error$ | async); else errorTemplate">
         <div
           *ngIf="loading$ | async; else productsTemplate"
@@ -85,6 +85,27 @@
             alt="Special Offer"
             class="img-fluid rounded"
           />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Top Categories -->
+  <section class="top-categories mb-5">
+    <div class="container">
+      <h2 class="section-title text-center mb-4">Categorías populares</h2>
+      <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="col" *ngFor="let category of topCategories$ | async">
+          <div class="category-card" [routerLink]="['/category', category.id]">
+            <div class="category-content">
+              <h5 class="category-title">{{ category.name }}</h5>
+              <div class="category-action">
+                <span class="btn-explore"
+                  >Explorar <i class="bi bi-arrow-right"></i
+                ></span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

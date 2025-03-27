@@ -52,7 +52,7 @@ public class CustomerReviewController : ControllerBase
 
     // GET: api/CustomerReview/product/5
     [HttpGet("product/{productId}")]
-    public async Task<ActionResult<IEnumerable<GetProductReviewDTO>>> GetProductReviews([FromRoute] int productId)
+    public async Task<ActionResult<ProductReviewSummary>> GetProductReviews([FromRoute] int productId)
     {
         var reviews = await _reviewService.GetProductReviewsAsync(productId);
         return Ok(reviews);

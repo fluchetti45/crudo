@@ -46,7 +46,7 @@ export class ProductsEffects {
     this.actions$.pipe(
       ofType(getProducts),
       mergeMap(() =>
-        this._products.getProducts().pipe(
+        this._products.getTopProducts().pipe(
           map((products) => {
             return getProductsSuccess({ products: products, error: null });
           }),

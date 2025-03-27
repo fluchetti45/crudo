@@ -19,7 +19,6 @@ namespace crudo.Controllers
 
         // GET: api/<CategoryController>
         [HttpGet]
-
         public async Task<ActionResult<IEnumerable<ReadCategoryDTO>>> GetCategories()
         {
             IEnumerable<ReadCategoryDTO> categories = await _services.GetCategories();
@@ -42,9 +41,6 @@ namespace crudo.Controllers
             }
             return Ok(category);
         }
-
-
-
 
         // POST api/<CategoryController>
         [HttpPost]
@@ -75,6 +71,7 @@ namespace crudo.Controllers
         // DELETE api/<CategoryController>/5
         [HttpDelete("{id}")]
         [Authorize(Policy = "AdminOnly")]
+
         public async Task<ActionResult<bool>> Delete(int id)
         {
             bool result = await _services.DeleteCategory(id);
@@ -84,5 +81,17 @@ namespace crudo.Controllers
             }
             return Ok(result);
         }
+
+        [HttpGet("top")]
+        public async Task<ActionResult<IEnumerable<TopCategoryDTO>>> GetTopCategories()
+        {
+            IEnumerable<TopCategoryDTO> categories = await _services.GetTopCategories();
+            if (categories == null)
+            {
+                return BadRequest();
+            }
+            return Ok(categories);
+        }
     }
+
 }

@@ -85,6 +85,17 @@ namespace crudo.Controllers
             return NotFound();
         }
 
+        [HttpGet("top")]
+        public async Task<ActionResult<IEnumerable<ReadProductDTO>>> GetTopProducts()
+        {
+            IEnumerable<ReadProductDTO> product = await this._services.GetTopProducts();
+            if (product != null)
+            {
+                return Ok(product);
+            }
+            return NotFound();
+        }
+
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<ReadProductDTO>>> GetFilteredProducts([FromQuery] string q)
         {

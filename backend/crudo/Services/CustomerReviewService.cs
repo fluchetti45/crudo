@@ -37,9 +37,11 @@ public class CustomerReviewService : ICustomerReviewService
             .FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<GetProductReviewDTO>> GetProductReviewsAsync(int productId)
+    public async Task<ProductReviewSummary> GetProductReviewsAsync(int productId)
     {
-        return await _context.CustomerReviews
+        try
+        {
+            var reviews = await _context.CustomerReviews
             .Include(r => r.Product)
             .Where(r => r.ProductId == productId)
             .Select(r => new GetProductReviewDTO
@@ -52,6 +54,29 @@ public class CustomerReviewService : ICustomerReviewService
                 UserId = r.UserId
             })
             .ToListAsync();
+            if (reviews.Count == 0)
+            {
+                return new ProductReviewSummary
+                {
+                    AverageRating = 0,
+                    TotalReviews = 0,
+                    Reviews = new List<GetProductReviewDTO>()
+                };
+            }
+
+            var averageRating = reviews.Average(r => r.Rating);
+            return new ProductReviewSummary
+            {
+                AverageRating = averageRating,
+                TotalReviews = reviews.Count,
+                Reviews = reviews
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener las reseñas del producto");
+            throw;
+        }
     }
 
     public async Task<CustomerReview> CreateReviewAsync(string userId, GenerateReviewDTO review)

@@ -13,7 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 import { getProduct } from '../../app/state/actions/products.actions';
 import { ErrorComponent } from '../error/error.component';
 import { ReviewService } from '../../services/review.service';
-import { ProductReview } from '../../app/models/reviews/productReview.interface';
+import { ProductReviewSummary } from '../../app/models/reviews/productReview.interface';
 import { ProductReviewComponent } from '../product-review/product-review.component';
 @Component({
   selector: 'app-ui-block-product-detail',
@@ -32,7 +32,11 @@ export class UiBlockProductDetailComponent implements OnInit {
   product$: Observable<any> = new Observable();
   loading$: Observable<boolean> = new Observable();
   error$: Observable<string | null> = new Observable();
-  reviews: ProductReview[] = [];
+  reviews: ProductReviewSummary = {
+    averageRating: 0,
+    totalReviews: 0,
+    reviews: [],
+  };
   private _route = inject(ActivatedRoute);
   private _reviews = inject(ReviewService);
   constructor(private _store: Store<AppState>) {

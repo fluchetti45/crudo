@@ -13,6 +13,9 @@ import {
   getCategory,
   getCategoryError,
   getCategorySuccess,
+  getTopCategories,
+  getTopCategoriesError,
+  getTopCategoriesSuccess,
   updateCategory,
   updateCategoryError,
   updateCategorySuccess,
@@ -21,6 +24,7 @@ import {
 export const initialState: CategoriesState = {
   loading: false,
   categories: [],
+  topCategories: [],
   categoryDetail: null,
   error: null,
   success: null,
@@ -28,24 +32,43 @@ export const initialState: CategoriesState = {
 
 export const categoriesReducer = createReducer(
   initialState,
+  // Get categories
   on(getCategories, (state) => {
     return { ...state, loading: true };
   }),
+  // Get categories success
   on(getCategoriesSuccess, (state, props) => {
     return { ...state, loading: false, categories: props.categories };
   }),
+  // Get categories error
   on(getCategoriesError, (state, props) => {
     return { ...state, loading: false, error: props.error };
   }),
+  // Get top categories
+  on(getTopCategories, (state) => {
+    return { ...state, loading: true };
+  }),
+  // Get top categories success
+  on(getTopCategoriesSuccess, (state, props) => {
+    return { ...state, loading: false, topCategories: props.topCategories };
+  }),
+  // Get top categories error
+  on(getTopCategoriesError, (state, props) => {
+    return { ...state, loading: false, error: props.error };
+  }),
+  // Get category
   on(getCategory, (state) => {
     return { ...state, loading: true };
   }),
+  // Get category success
   on(getCategorySuccess, (state, props) => {
     return { ...state, loading: false, categoryDetail: props.category };
   }),
+  // Get category error
   on(getCategoryError, (state, props) => {
     return { ...state, loading: false, error: props.error };
   }),
+  // Create category
   on(createCategory, (state) => {
     return { ...state, loading: true };
   }),

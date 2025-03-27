@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
 import { CategoriesService } from '../../../services/categories.service';
-import { catchError, EMPTY, map, mergeMap, of } from 'rxjs';
+import { catchError, map, mergeMap, of } from 'rxjs';
 import {
   createCategory,
   createCategoryError,
@@ -16,6 +16,9 @@ import {
   getCategory,
   getCategoryError,
   getCategorySuccess,
+  getTopCategories,
+  getTopCategoriesError,
+  getTopCategoriesSuccess,
   updateCategory,
   updateCategoryError,
   updateCategorySuccess,
@@ -37,6 +40,26 @@ export class CategoriesEffects {
           catchError((error) =>
             of(
               getCategoriesError({ error: error.message || 'Ocurrio un error' })
+            )
+          )
+        )
+      )
+    )
+  );
+  // GET TOP CATEGORIES
+  loadTopCategories$ = createEffect(() =>
+    this._actions$.pipe(
+      ofType(getTopCategories),
+      mergeMap(() =>
+        this._categories.getTopCategories().pipe(
+          map((topCategories) =>
+            getTopCategoriesSuccess({ topCategories: topCategories })
+          ),
+          catchError((error) =>
+            of(
+              getTopCategoriesError({
+                error: error.message || 'Ocurrio un error',
+              })
             )
           )
         )

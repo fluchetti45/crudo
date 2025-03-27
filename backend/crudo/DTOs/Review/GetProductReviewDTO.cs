@@ -11,3 +11,11 @@ public partial class GetProductReviewDTO
     public DateTime CreatedAt { get; set; }
 
 }
+
+public class ProductReviewSummary
+{
+    public double AverageRating { get; set; }
+    public int TotalReviews { get; set; }
+
+    public List<GetProductReviewDTO> Reviews { get; set; } = new List<GetProductReviewDTO>();
+}
