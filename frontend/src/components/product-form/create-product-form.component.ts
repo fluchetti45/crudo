@@ -38,7 +38,7 @@ import { Product } from '../../app/models/products/product.interface';
   templateUrl: './create-product-form.component.html',
   styleUrl: './create-product-form.component.css',
 })
-export class ProductFormComponent implements OnInit, OnDestroy {
+export class ProductFormComponent implements OnInit {
   @Input() product?: Product; // Para recibir un producto existente
 
   previewMode = false;
@@ -49,12 +49,6 @@ export class ProductFormComponent implements OnInit, OnDestroy {
   categories$: Observable<Category[]> = new Observable();
   selectedImages: FileList | null = null; // Variable para almacenar archivos
   public productForm: FormGroup;
-  editor: Editor;
-  toolbar: Toolbar = [
-    ['bold', 'italic', 'underline'],
-    ['ordered_list', 'bullet_list'],
-    ['link'],
-  ];
 
   constructor(private _store: Store<AppState>) {
     this.productForm = this._fb.group({
@@ -68,13 +62,6 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     this.loading$ = this._store.select(selectLoading);
     this.success$ = this._store.select(selectSuccess);
     this.error$ = this._store.select(selectError);
-    this.editor = new Editor({
-      content: '',
-      history: true,
-      keyboardShortcuts: true,
-      inputRules: true,
-      plugins: [],
-    });
   }
 
   ngOnInit() {
@@ -87,10 +74,6 @@ export class ProductFormComponent implements OnInit, OnDestroy {
         categoryId: this.product.categoryId,
       });
     }
-  }
-
-  ngOnDestroy(): void {
-    this.editor.destroy();
   }
 
   // Función para manejar la selección de imágenes

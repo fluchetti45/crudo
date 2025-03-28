@@ -12,7 +12,6 @@ import {
 } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-search-products',
@@ -38,8 +37,7 @@ export class SearchProductsComponent implements OnInit {
   constructor(
     private _route: ActivatedRoute,
     private _router: Router,
-    private _productService: ProductService,
-    private sanitizer: DomSanitizer
+    private _productService: ProductService
   ) {}
 
   ngOnInit() {
@@ -58,11 +56,6 @@ export class SearchProductsComponent implements OnInit {
   }
 
   getPreviewDescription(description: string): string {
-    // Primero convertimos el HTML a texto plano
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = description;
-    const textContent = tempDiv.textContent || tempDiv.innerText || '';
-    // Luego tomamos los primeros 100 caracteres
-    return textContent.slice(0, 100) + '...';
+    return description.slice(0, 100) + '...';
   }
 }

@@ -116,14 +116,12 @@
 
               <div class="mb-3">
                 <label for="description" class="form-label">Descripción</label>
-                <div class="NgxEditor__Wrapper">
-                  <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
-                  <ngx-editor
-                    [editor]="editor"
-                    formControlName="description"
-                    [placeholder]="'Escribe la descripción del producto...'"
-                  ></ngx-editor>
-                </div>
+                <textarea
+                  class="form-control form-control-lg"
+                  id="description"
+                  formControlName="description"
+                  required
+                ></textarea>
                 <div
                   *ngIf="submitted && f['description'].errors"
                   class="invalid-feedback"

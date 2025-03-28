@@ -40,7 +40,7 @@ import { Editor, NgxEditorModule } from 'ngx-editor';
   templateUrl: './product-edit.component.html',
   styleUrl: './product-edit.component.css',
 })
-export class ProductEditComponent implements OnInit, OnDestroy {
+export class ProductEditComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   loading$: Observable<boolean> = new Observable();
@@ -49,7 +49,6 @@ export class ProductEditComponent implements OnInit, OnDestroy {
   productId!: number;
   productForm!: FormGroup;
   submitted = false;
-  editor: Editor;
 
   constructor(private store: Store<AppState>) {
     this.categories$ = this.store.select(selectCategoryList);
@@ -63,13 +62,6 @@ export class ProductEditComponent implements OnInit, OnDestroy {
       categoryId: ['', Validators.required],
       stock: [0, [Validators.required, Validators.min(0)]],
     });
-    this.editor = new Editor({
-      content: '',
-      history: true,
-      keyboardShortcuts: true,
-      inputRules: true,
-      plugins: [],
-    });
   }
 
   ngOnInit(): void {
@@ -79,10 +71,6 @@ export class ProductEditComponent implements OnInit, OnDestroy {
         this.productId = product.id;
       }
     });
-  }
-
-  ngOnDestroy() {
-    this.editor.destroy();
   }
 
   get f() {
