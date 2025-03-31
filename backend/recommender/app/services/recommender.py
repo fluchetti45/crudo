@@ -1,11 +1,34 @@
 import pandas as pd
 import numpy as np
+import time
+import sys
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import MinMaxScaler
-from app.utils.db import get_products, get_categories
+from app.utils.db import get_products, get_categories, test_connection
 
+# Intentar conexion a la base de datos
+def wait_for_db(max_retries=5, delay=5):
+    print("Esperando conexión a la base de datos...")
+    for attempt in range(max_retries):
+        try:
+            if test_connection():
+                print("Conexión a la base de datos exitosa!")
+                return True
+            print(f"Intento {attempt + 1}/{max_retries} fallido. Reintentando en {delay} segundos...")
+            time.sleep(delay)
+        except Exception as e:
+            print(f"Error en intento {attempt + 1}: {str(e)}")
+            if attempt < max_retries - 1:
+                print(f"Reintentando en {delay} segundos...")
+                time.sleep(delay)
+            else:
+                print("No se pudo establecer conexión con la base de datos después de varios intentos.")
+                sys.exit(1)
+    return False
 
+# 🔹 Esperar y verificar la conexión a la base de datos
+wait_for_db()
 
 
 # 🔹 Obtener los datos de los productos y categorías

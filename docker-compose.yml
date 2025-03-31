@@ -52,8 +52,13 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    environment:
+      - DB_SERVER=db
+      - DB_DATABASE=crudo
+      - DB_USER=sa
+      - DB_PASSWORD=${DB_SA_PASSWORD}
     depends_on:
-      - db
+      - backend
     networks:
       - ecommerce-net
 

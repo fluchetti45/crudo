@@ -9,11 +9,13 @@ load_dotenv()
 def connect_to_database():
     server = os.getenv('DB_SERVER')
     database = os.getenv('DB_DATABASE')
+    username = 'sa'
+    password = os.getenv('DB_PASSWORD')
 
     if not server or not database:
         raise ValueError("DB_SERVER or DB_DATABASE not found in environment variables")
         
-    conn_str = f'mssql+pyodbc://{server}/{database}?driver=ODBC+Driver+17+for+SQL+Server&Trusted_Connection=yes'
+    conn_str = f'mssql+pyodbc://{username}:{password}@{server}/{database}?driver=ODBC+Driver+17+for+SQL+Server'
     engine = create_engine(conn_str)
     return engine
 

@@ -212,7 +212,7 @@ namespace crudo.Services
 
         public async Task<List<RelatedProductDTO>> GetRelatedProducts(int productId)
         {
-            var response = await _httpClient.GetAsync($"http://localhost:8000/recommend/{productId}");
+            var response = await _httpClient.GetAsync($"http://recommender:8000/recommend/{productId}");
             if (!response.IsSuccessStatusCode)
             {
                 return null;

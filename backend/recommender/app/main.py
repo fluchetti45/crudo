@@ -1,4 +1,3 @@
-
 import fastapi
 from app.models.models import RecommendRequest, RecommendResponse
 from app.services.recommender import recommend_products
