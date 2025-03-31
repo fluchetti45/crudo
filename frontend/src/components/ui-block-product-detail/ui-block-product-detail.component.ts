@@ -15,6 +15,7 @@ import { ErrorComponent } from '../error/error.component';
 import { ReviewService } from '../../services/review.service';
 import { ProductReviewSummary } from '../../app/models/reviews/productReview.interface';
 import { ProductReviewComponent } from '../product-review/product-review.component';
+import { ProductDetail } from '../../app/models/products/productDetail.interface';
 @Component({
   selector: 'app-ui-block-product-detail',
   imports: [
@@ -29,7 +30,7 @@ import { ProductReviewComponent } from '../product-review/product-review.compone
   styleUrl: './ui-block-product-detail.component.css',
 })
 export class UiBlockProductDetailComponent implements OnInit {
-  product$: Observable<any> = new Observable();
+  product$: Observable<ProductDetail | null> = new Observable();
   loading$: Observable<boolean> = new Observable();
   error$: Observable<string | null> = new Observable();
   reviews: ProductReviewSummary = {
@@ -38,7 +39,6 @@ export class UiBlockProductDetailComponent implements OnInit {
     reviews: [],
   };
   private _route = inject(ActivatedRoute);
-  private _reviews = inject(ReviewService);
   constructor(private _store: Store<AppState>) {
     this.product$ = this._store.select(selectProductDetail);
     this.loading$ = this._store.select(selectLoading);
@@ -48,9 +48,6 @@ export class UiBlockProductDetailComponent implements OnInit {
     const productId = this._route.snapshot.paramMap.get('id');
     if (productId) {
       this._store.dispatch(getProduct({ productId }));
-      this._reviews.getProductReviews(productId).subscribe((reviews) => {
-        this.reviews = reviews;
-      });
     }
   }
 }

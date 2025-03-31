@@ -3,6 +3,7 @@ using crudo.DTOs.Product;
 using crudo.Interfaces;
 using crudo.Models;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace crudo.Services
 {
@@ -10,36 +11,51 @@ namespace crudo.Services
     {
         private readonly CrudoContext _context;
         private readonly ProductImageServices _imagesService;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+
+        private readonly ILogger<ProductServices> _logger;
+
+        private readonly HttpClient _httpClient;
 
         private readonly string CoverPlaceholder;
-        public ProductServices(CrudoContext context, ProductImageServices imageServices)
+        public ProductServices(CrudoContext context, ProductImageServices imageServices, IServiceScopeFactory serviceScopeFactory, ILogger<ProductServices> logger)
         {
             _context = context;
             _imagesService = imageServices;
+            _serviceScopeFactory = serviceScopeFactory;
             CoverPlaceholder = "https://res.cloudinary.com/da8y2vp4k/image/upload/v1741205504/placeholderwebp_wakx4r.webp";
+            _httpClient = new HttpClient();
+            _logger = logger;
         }
 
         public async Task<ReadProductDTO> GetProductBasic(int productId)
         {
             try
             {
-                ReadProductDTO product = await _context.Products.Where(p => p.Id == productId && p.isDeleted == false).Select(p => new ReadProductDTO
+                using (var scope = _serviceScopeFactory.CreateScope())
                 {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    Stock = p.Stock,
-                    CreatedAt = p.CreatedAt,
-                    UpdatedAt = p.UpdatedAt,
-                    CategoryId = p.CategoryId,
-                    CategoryName = p.Category.Name,
-                    filePathCover = _context.ProductImages
-                                               .Where(pi => pi.ProductId == p.Id && pi.IsCover == true)
-                                               .Select(pi => pi.FilePath)
-                                               .FirstOrDefault() ?? this.CoverPlaceholder
-                }).FirstOrDefaultAsync();
-                return product;
+                    var context = scope.ServiceProvider.GetRequiredService<CrudoContext>();
+                    ReadProductDTO product = await context.Products
+                        .Where(p => p.Id == productId && p.isDeleted == false)
+                        .Select(p => new ReadProductDTO
+                        {
+                            Id = p.Id,
+                            Name = p.Name,
+                            Description = p.Description,
+                            Price = p.Price,
+                            Stock = p.Stock,
+                            CreatedAt = p.CreatedAt,
+                            UpdatedAt = p.UpdatedAt,
+                            CategoryId = p.CategoryId,
+                            CategoryName = p.Category.Name,
+                            filePathCover = context.ProductImages
+                                .Where(pi => pi.ProductId == p.Id && pi.IsCover == true)
+                                .Select(pi => pi.FilePath)
+                                .FirstOrDefault() ?? this.CoverPlaceholder
+                        })
+                        .FirstOrDefaultAsync();
+                    return product;
+                }
             }
             catch (Exception ex)
             {
@@ -170,7 +186,22 @@ namespace crudo.Services
         {
             try
             {
-                Product product = await _context.Products.Include(p => p.ProductImages).Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == productId);
+                // Obtener el producto principal
+                Product product;
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var context = scope.ServiceProvider.GetRequiredService<CrudoContext>();
+                    product = await context.Products
+                    .Include(p => p.ProductImages)
+                    .Include(p => p.Category)
+                    .FirstOrDefaultAsync(p => p.Id == productId);
+                }
+
+                if (product == null)
+                {
+                    return null;
+                }
+
                 return product;
             }
             catch (Exception ex)
@@ -179,33 +210,62 @@ namespace crudo.Services
             }
         }
 
-        public async Task<IEnumerable<ReadProductDTO>> GetRelatedProducts(int productId, int categoryId)
+        public async Task<List<RelatedProductDTO>> GetRelatedProducts(int productId)
         {
+            var response = await _httpClient.GetAsync($"http://localhost:8000/recommend/{productId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+
+            }
+            var content = await response.Content.ReadAsStringAsync();
+            var relatedProducts = JsonConvert.DeserializeObject<RecommendResponseDTO>(content);
+            var productIds = relatedProducts.ProductIds;
+            var TaskList = new List<Task<RelatedProductDTO>>();
+            foreach (var id in productIds)
+            {
+                TaskList.Add(GetRelatedProductDTO(id));
+            }
+            var products = await Task.WhenAll(TaskList);
+            return products.ToList();
+        }
+
+        private async Task<RelatedProductDTO> GetRelatedProductDTO(int productId)
+        {
+            _logger.LogInformation($"Obteniendo producto con ID: {productId}");
             try
             {
-                IEnumerable<ReadProductDTO> products = await _context.Products.Where(p => p.CategoryId == categoryId && p.Id != productId && p.isDeleted == false).Select(p => new ReadProductDTO
+                using (var scope = _serviceScopeFactory.CreateScope())
                 {
-                    Id = p.Id,
-                    CategoryId = p.CategoryId,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    Stock = p.Stock,
-                    CreatedAt = p.CreatedAt,
-                    // Filtramos las imágenes que son portada
-                    filePathCover = p.ProductImages
-                                          .Where(pi => pi.IsCover == true)
-                                          .Select(pi => pi.FilePath)
-                                            .FirstOrDefault() ?? this.CoverPlaceholder
-
-                }).ToListAsync();
-                return products;
+                    var context = scope.ServiceProvider.GetRequiredService<CrudoContext>();
+                    var product = await context.Products
+                        .Where(p => p.Id == productId)
+                        .Include(p => p.ProductImages)
+                        .Select(p => new RelatedProductDTO
+                        {
+                            Id = p.Id,
+                            Name = p.Name,
+                            Price = p.Price,
+                            Stock = p.Stock,
+                            filePathCover = p.ProductImages
+                                .Where(pi => pi.IsCover == true)
+                                .Select(pi => pi.FilePath).FirstOrDefault()
+                        })
+                        .FirstOrDefaultAsync();
+                    if (product != null)
+                    {
+                        return product;
+                    }
+                    return null;
+                }
             }
             catch (Exception ex)
             {
                 return null;
             }
         }
+
+
 
         public async Task<IEnumerable<ReadProductDTO>> GetFilteredProducts(string q)
         {

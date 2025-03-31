@@ -1,12 +1,11 @@
 import { Component, inject, Input, type OnInit } from '@angular/core';
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { RelatedProductComponent } from '../related-product/related-product.component';
-import { Category } from '../../app/models/categories/category.interface';
 import { Product } from '../../app/models/products/product.interface';
-import { Observable } from 'rxjs';
 import { ProductService } from '../../services/products.service';
+import { ProductDetail } from '../../app/models/products/productDetail.interface';
 
 @Component({
   selector: 'app-related-products',
@@ -16,21 +15,22 @@ import { ProductService } from '../../services/products.service';
     RouterModule,
     SlickCarouselModule,
     RelatedProductComponent,
-    AsyncPipe,
   ],
   templateUrl: './ui-block-related-products.component.html',
   styleUrl: './ui-block-related-products.component.css',
 })
 export class UiBlockRelatedProductsComponent implements OnInit {
-  @Input() category!: Category;
-  @Input() productId!: number;
+  @Input() product!: ProductDetail;
+  products: Product[] = [];
+
   private _productService = inject(ProductService);
-  relatedProducts$: Observable<Product[]> = new Observable();
+
   ngOnInit(): void {
-    this.relatedProducts$ = this._productService.getRelatedProducts(
-      this.productId,
-      this.category.id
-    );
+    this._productService
+      .getRelatedProducts(this.product.id)
+      .subscribe((products) => {
+        this.products = products;
+      });
   }
 
   slideConfig = {

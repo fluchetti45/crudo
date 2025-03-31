@@ -60,7 +60,6 @@ namespace crudo.Controllers
 
         // GET api/<ProductsController>/5
         [HttpGet("{id}")]
-
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
 
@@ -73,14 +72,14 @@ namespace crudo.Controllers
         }
 
         // GET api/<ProductsController>/5
-        [HttpPost("related")]
-        public async Task<ActionResult<ReadProductDTO>> GetRelatedProducts([FromBody] GetRelatedProductsDTO data)
+        [HttpGet("related/{id}")]
+        public async Task<ActionResult<List<Product>>> GetRelatedProducts(int id)
         {
 
-            IEnumerable<ReadProductDTO> product = await this._services.GetRelatedProducts(data.ProductId, data.CategoryId);
-            if (product != null)
+            List<RelatedProductDTO> products = await this._services.GetRelatedProducts(id);
+            if (products != null)
             {
-                return Ok(product);
+                return Ok(products);
             }
             return NotFound();
         }

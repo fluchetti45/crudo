@@ -18,7 +18,7 @@ export class RelatedProductComponent {
 
   constructor(private _store: Store<AppState>) {}
   handleClick() {
-    if (this.product.stock > 0) {
+    if (this.product.id) {
       var productId = this.product.id.toString();
 
       this._store.dispatch(getProduct({ productId }));

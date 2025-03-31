@@ -45,12 +45,8 @@ export class ProductService {
     return this._http.get<ProductDetail>(`${this.url}/${productId}`);
   }
 
-  getRelatedProducts(
-    productId: number,
-    categoryId: number
-  ): Observable<Product[]> {
-    const data = { productId: productId, categoryId: categoryId };
-    return this._http.post<Product[]>(`${this.url}/related`, data);
+  getRelatedProducts(productId: number): Observable<Product[]> {
+    return this._http.get<Product[]>(`${this.url}/related/${productId}`);
   }
 
   getFilteredProducts(q: string): Observable<Product[]> {

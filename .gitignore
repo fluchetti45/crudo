@@ -23,6 +23,12 @@ backend/crudo/*.db
 backend/crudo/*.sqlite
 #backend/crudo/Migrations/
 
+# 🔹 Archivos de FastAPI (recommender)
+backend/recommender/venv/
+backend/recommender/.env
+__pycache__/
+
+
 
 # 🔹 General (Windows, Mac, Linux)
 *.DS_Store

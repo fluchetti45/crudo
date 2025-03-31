@@ -56,7 +56,7 @@
         </button>
       </div>
       <h2 class="mb-4">{{ product.name }}</h2>
-      <p class="mb-4" [innerHTML]="getSafeDescription()"></p>
+      <p class="mb-4">{{ product.description }}</p>
 
       <h3 class="text-primary mb-4">
         {{ product.price.toFixed(2) | currency }}
@@ -131,5 +131,4 @@
   </div>
 </div>
 
-<app-related-products [productId]="product.id" [category]="product.category">
-</app-related-products>
+<app-related-products [product]="product"></app-related-products>

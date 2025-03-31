@@ -1,4 +1,5 @@
 import { Category } from '../categories/category.interface';
+import { Product } from './product.interface';
 
 export interface ProductImage {
   id: number;

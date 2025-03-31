@@ -6,13 +6,12 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.OpenApi.Models;
 using Crudo.Services;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+
 
 
 // Cargar variables de entorno desde el archivo .env
 try
 {
-    // En el contenedor, el archivo estará en /app/.env
     var envPath = File.Exists("/app/.env") ? "/app/.env" :
                   File.Exists(".env") ? ".env" :
                   "../../.env";
@@ -22,7 +21,6 @@ try
 catch (Exception e)
 {
     Console.WriteLine($"Warning: No se pudo cargar el archivo .env: {e.Message}");
-    // Continuamos la ejecución ya que las variables pueden estar definidas en el ambiente
 }
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,8 +29,6 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") ??
     builder.Configuration.GetConnectionString("DefaultConnection") ??
     throw new InvalidOperationException("Connection string not found.");
-
-// Registrar el DbContext normal para servicios scoped
 builder.Services.AddDbContext<CrudoContext>(options =>
 {
     options.UseSqlServer(connectionString, sqlServerOptions =>
@@ -160,6 +156,7 @@ builder.Services.AddScoped<ShippingDataServices>();
 builder.Services.AddScoped<MailgunService>();
 builder.Services.AddScoped<WishlistService>();
 builder.Services.AddScoped<DashboardServices>();
+
 
 var app = builder.Build();
 

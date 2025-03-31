@@ -8,7 +8,7 @@ services:
     user: "0:0"
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=${DB_SA_PASSWORD}
+      - MSSQL_SA_PASSWORD=${DB_SA_PASSWORD}
       - MSSQL_PID=Express
     ports:
       - "1433:1433"
@@ -39,6 +39,19 @@ services:
       - Cloudinary__ApiSecret=${CLOUDINARY_API_SECRET}
       - Auth0__Domain=${AUTH0_DOMAIN}
       - Auth0__Audience=${AUTH0_AUDIENCE}
+    depends_on:
+      - db
+    networks:
+      - ecommerce-net
+
+  # Recommender
+  recommender:
+    container_name: recommender
+    build:
+      context: ./backend/recommender
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
     depends_on:
       - db
     networks:

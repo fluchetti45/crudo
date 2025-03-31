@@ -16,9 +16,9 @@ import {
 } from '../../app/state/selectors/products.selectors';
 import { deleteProduct } from '../../app/state/actions/products.actions';
 import { AsyncPipe, CurrencyPipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { ToastrService } from 'ngx-toastr';
+
 import { Router, RouterLink } from '@angular/router';
-import { ProductService } from '../../services/products.service';
+
 import { ProductDetail } from '../../app/models/products/productDetail.interface';
 import { UiBlockRelatedProductsComponent } from '../ui-block-related-products/ui-block-related-products.component';
 import { AuthService, User } from '@auth0/auth0-angular';
@@ -51,7 +51,6 @@ import { selectIsInWishlist } from '../../app/state/selectors/wishlist.selectors
 export class ProductDetailComponent implements OnInit {
   @Input() product!: ProductDetail;
   @ViewChild('quantityInput') quantityInput!: ElementRef;
-  private _productService: ProductService = inject(ProductService);
   private _router = inject(Router);
   private auth = inject(AuthService);
   isAuthenticated$ = this.auth.isAuthenticated$;
@@ -79,22 +78,12 @@ export class ProductDetailComponent implements OnInit {
 
   ngOnInit(): void {
     console.log(this.product);
-    this.selectedImage = this.product.productImages[0];
-
-    if (this.product.category?.id) {
-      this.relatedProducts$ = this._productService.getRelatedProducts(
-        this.product.id,
-        this.product.category.id
-      );
-      console.log(this.relatedProducts$);
-    } else {
-      this.relatedProducts$ = of([]);
+    if (this.product.productImages) {
+      this.selectedImage = this.product.productImages[0];
     }
-
     this.isInWishlist$ = this._store.select(
       selectIsInWishlist(this.product.id)
     );
-
     this.deletedProduct$.subscribe({
       next: (res) => {
         if (res) {
@@ -163,10 +152,6 @@ export class ProductDetailComponent implements OnInit {
         })
       );
     });
-  }
-
-  getSafeDescription(): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(this.product.description);
   }
 
   removeFromWishlist(productId: number) {

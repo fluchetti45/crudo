@@ -18,5 +18,7 @@ namespace crudo.Interfaces
         public Task<EditProductDTO> UpdateProduct(EditProductDTO product);
 
         public Task<bool> DeleteProduct(int productId);
+
+        public Task<List<RelatedProductDTO>> GetRelatedProducts(int productId);
     }
 }
