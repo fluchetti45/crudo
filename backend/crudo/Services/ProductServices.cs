@@ -10,6 +10,8 @@ namespace crudo.Services
     public class ProductServices : IProduct
     {
         private readonly CrudoContext _context;
+
+        private readonly string _recommenderApiUrl;
         private readonly ProductImageServices _imagesService;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
@@ -24,6 +26,7 @@ namespace crudo.Services
             _imagesService = imageServices;
             _serviceScopeFactory = serviceScopeFactory;
             CoverPlaceholder = "https://res.cloudinary.com/da8y2vp4k/image/upload/v1741205504/placeholderwebp_wakx4r.webp";
+            _recommenderApiUrl = Environment.GetEnvironmentVariable("RECOMMENDER_API_URL");
             _httpClient = new HttpClient();
             _logger = logger;
         }
@@ -212,7 +215,7 @@ namespace crudo.Services
 
         public async Task<List<RelatedProductDTO>> GetRelatedProducts(int productId)
         {
-            var response = await _httpClient.GetAsync($"http://recommender:8000/recommend/{productId}");
+            var response = await _httpClient.GetAsync($"{_recommenderApiUrl}/recommend/{productId}");
             if (!response.IsSuccessStatusCode)
             {
                 return null;

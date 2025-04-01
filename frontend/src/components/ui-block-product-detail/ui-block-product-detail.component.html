@@ -12,19 +12,28 @@
         [product]="product"
       ></app-product-detail>
       <!-- Cargar las reviews del producto -->
-      <div *ngIf="reviews.totalReviews > 0">
-        <h3>
-          Reviews disponibles ({{ reviews.totalReviews }}). Rating promedio
-          {{ reviews.averageRating }}
-        </h3>
-        <div *ngFor="let review of reviews.reviews">
-          <app-product-review [review]="review"></app-product-review>
-        </div>
-      </div>
+      <ng-container *ngIf="reviews">
+        <ng-container *ngIf="reviews.totalReviews > 0; else noReviews">
+          <div class="reviews-section mt-4">
+            <h3 class="mb-3">
+              Reviews disponibles ({{ reviews.totalReviews }}). Rating promedio
+              {{ reviews.averageRating }}
+            </h3>
+            <div class="reviews-container">
+              <div *ngFor="let review of reviews.reviews">
+                <app-product-review [review]="review"></app-product-review>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #noReviews>
+          <h3>No hay reviews disponibles</h3>
+        </ng-template>
+      </ng-container>
     </ng-container>
-  </ng-container>
 
-  <ng-template #errorTemplate>
-    <app-error [title]="(error$ | async) || 'Algo salio mal'"></app-error>
-  </ng-template>
+    <ng-template #errorTemplate>
+      <app-error [title]="(error$ | async) || 'Algo salio mal'"></app-error>
+    </ng-template>
+  </ng-container>
 </div>

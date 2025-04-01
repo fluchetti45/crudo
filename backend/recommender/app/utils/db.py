@@ -2,24 +2,28 @@ import pandas as pd
 from sqlalchemy import create_engine
 import os
 from dotenv import load_dotenv
+import urllib.parse
 
 load_dotenv()
 
 
 def connect_to_database():
-    server = os.getenv('DB_SERVER')
-    database = os.getenv('DB_DATABASE')
-    username = 'sa'
-    password = os.getenv('DB_PASSWORD')
-
-    if not server or not database:
-        raise ValueError("DB_SERVER or DB_DATABASE not found in environment variables")
-        
-    conn_str = f'mssql+pyodbc://{username}:{password}@{server}/{database}?driver=ODBC+Driver+17+for+SQL+Server'
+    conn_str = os.getenv('DB_CONNECTION_STRING_RECOMMENDER')
+    
+    if not conn_str:
+        raise ValueError("Database connection string not found in environment variables")
+    
+    # Reemplazar las variables en el string de conexión
+    conn_str = conn_str.format(
+        DB_SERVER=os.getenv('DB_SERVER'),
+        DB_DATABASE=os.getenv('DB_DATABASE'),
+        DB_DRIVER=urllib.parse.quote_plus(os.getenv('DB_DRIVER'))
+    )    
     engine = create_engine(conn_str)
     return engine
 
 def test_connection():
+    engine = None
     try:
         engine = connect_to_database()
         
@@ -47,19 +51,28 @@ def test_connection():
         return False
     
     finally:
-        engine.dispose()
-        print("Conexión cerrada")
+        if engine:
+            engine.dispose()
+            print("Conexión cerrada")
 
 def get_products():
-    engine = connect_to_database()
-    query = "SELECT * FROM Product"
-    products_df = pd.read_sql(query, engine)
-    engine.dispose()
-    return products_df
+    engine = None
+    try:
+        engine = connect_to_database()
+        query = "SELECT * FROM Product"
+        products_df = pd.read_sql(query, engine)
+        return products_df
+    finally:
+        if engine:
+            engine.dispose()
 
 def get_categories():
-    engine = connect_to_database()
-    query = "SELECT id, name FROM Category"
-    categories_df = pd.read_sql(query, engine)
-    engine.dispose()
-    return categories_df
+    engine = None
+    try:
+        engine = connect_to_database()
+        query = "SELECT id, name FROM Category"
+        categories_df = pd.read_sql(query, engine)
+        return categories_df
+    finally:
+        if engine:
+            engine.dispose()
