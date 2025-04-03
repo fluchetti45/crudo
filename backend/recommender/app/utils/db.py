@@ -17,8 +17,11 @@ def connect_to_database():
     conn_str = conn_str.format(
         DB_SERVER=os.getenv('DB_SERVER'),
         DB_DATABASE=os.getenv('DB_DATABASE'),
+	DB_USER=os.getenv('DB_USER'),
+	DB_PASSWORD=os.getenv('DB_PASSWORD'),
         DB_DRIVER=urllib.parse.quote_plus(os.getenv('DB_DRIVER'))
     )    
+    print(conn_str)
     engine = create_engine(conn_str)
     return engine
 
