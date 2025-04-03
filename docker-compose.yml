@@ -39,6 +39,7 @@ services:
       - Cloudinary__ApiSecret=${CLOUDINARY_API_SECRET}
       - Auth0__Domain=${AUTH0_DOMAIN}
       - Auth0__Audience=${AUTH0_AUDIENCE}
+      - RECOMMENDER_API_URL=${URL_RECOMMEND}
     depends_on:
       - db
     networks:
@@ -57,6 +58,10 @@ services:
       - DB_DATABASE=crudo
       - DB_USER=sa
       - DB_PASSWORD=${DB_SA_PASSWORD}
+      - DB_DRIVER=ODBC Driver 17 for SQL Server
+      - DB_TRUST_SERVER_CERTIFICATE=True
+      - DB_TRUSTED_CONNECTION=False
+      - DB_CONNECTION_STRING_RECOMMENDER=${DB_CONNECTION_STRING_RECOMMENDER}
     depends_on:
       - backend
     networks:
