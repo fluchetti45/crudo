@@ -46,7 +46,7 @@ export class ProductService {
   }
 
   getRelatedProducts(productId: number): Observable<Product[]> {
-    return this._http.get<Product[]>(`${this.url}/recommend/${productId}`);
+    return this._http.get<Product[]>(`${this.url}/related/${productId}`);
   }
 
   getFilteredProducts(q: string): Observable<Product[]> {
