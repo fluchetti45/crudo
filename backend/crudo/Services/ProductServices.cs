@@ -274,6 +274,7 @@ namespace crudo.Services
         {
             try
             {
+                return await GetFilteredProductsByQuery(q);
                 IEnumerable<ReadProductDTO> products = await _context.Products.Where(p => p.isDeleted == false && EF.Functions.Like(p.Name, $"%{q}%")).Select(p => new ReadProductDTO
                 {
                     Id = p.Id,
@@ -290,7 +291,13 @@ namespace crudo.Services
                                           .FirstOrDefault() ?? this.CoverPlaceholder
 
                 }).ToListAsync();
-                return products;
+                if (products.Any())
+                {
+                    return products;
+                }
+                else{
+                    return await GetFilteredProductsByQuery(q);
+                }
             }
             catch (Exception ex)
             {
@@ -298,6 +305,25 @@ namespace crudo.Services
             }
         }
 
+        private async Task<IEnumerable<ReadProductDTO>> GetFilteredProductsByQuery(string q)
+        {
+            var response = await _httpClient.GetAsync($"{_recommenderApiUrl}/recommend/search?query={q}");
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+            var content = await response.Content.ReadAsStringAsync();
+            var relatedProducts = JsonConvert.DeserializeObject<RecommendResponseDTO>(content);
+            var productIds = relatedProducts.ProductIds;
+            var TaskList = new List<Task<ReadProductDTO>>();
+            foreach (var id in productIds)
+            {
+                TaskList.Add(GetProductBasic(id));
+            }
+            var products = await Task.WhenAll(TaskList);
+            return products.ToList();
+        }
+        
         public async Task<Product> CreateProduct(CreateProductDTO productDTO)
         {
             try

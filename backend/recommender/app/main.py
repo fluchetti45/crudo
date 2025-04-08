@@ -1,6 +1,6 @@
 import fastapi
-from app.models.models import RecommendRequest, RecommendResponse
-from app.services.recommender import  get_recommendations
+from app.models.models import  RecommendResponse
+from app.services.recommender import  get_recommendations, get_recommendations_by_query
 
 
 app = fastapi.FastAPI()
@@ -12,6 +12,22 @@ app = fastapi.FastAPI()
 def read_root():
     return {"message": "Hello World"}
 
+@app.get("/recommend/search", response_model=RecommendResponse)
+async def search(query: str):
+    try:
+        print(f"Buscando productos similares a: {query}")
+        recommendations = get_recommendations_by_query(query = query, n_recommendations=5)
+        response = RecommendResponse(
+            productIds=recommendations[0],
+            scores=recommendations[1]
+        )   
+        return response
+    except ValueError as e:
+        print(e)
+        raise fastapi.HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        print(f"Error desconocido: {e}")
+        raise fastapi.HTTPException(status_code=500, detail="Internal Server Error")
 
 @app.get("/recommend/{product_id}", response_model=RecommendResponse)
 async def recommend(product_id: int):  
@@ -31,11 +47,4 @@ async def recommend(product_id: int):
         # Si ocurre otro error, respondemos con un 500
         print(f"Error desconocido: {e}")
         raise fastapi.HTTPException(status_code=500, detail="Internal Server Error")
-    
-
-
-
-
-
-
 

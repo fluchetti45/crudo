@@ -4,19 +4,10 @@ import time
 import sys
 from app.utils.db import get_products, get_categories, test_connection
 from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
+import faiss
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 
-
-
-# 🔹 Obtener la matriz de similitud entre los embeddings de las descripciones de los productos.
-def get_similarities(embeddings):
-    """
-    Computa la matriz de similitud entre los embeddings de las descripciones de los productos.
-    """
-    similarity_matrix = cosine_similarity(embeddings, embeddings)
-    return similarity_matrix
 
 
 # Intentar conexion a la base de datos
@@ -48,7 +39,6 @@ products_df = get_products()
 categories_df = get_categories()
 
 # 🔹 Unir los datos de los productos y categorías
-# 🔹 Unir los datos de los productos y categorías
 df_products = pd.merge(products_df, categories_df, left_on="category_id", right_on="id")[["id_x","description","price","name_x","id_y","name_y"]]
 df_products.rename(columns={"id_x":"productId", "name_x":"productName", "id_y":"categoryId", "name_y":"category"}, inplace=True)
 df_products["input_text"] = "Categoria: " + df_products["category"] + ". " + df_products["productName"] + ". " + df_products["description"]
@@ -59,36 +49,61 @@ model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniL
 
 # 🔹 Obtener los embeddings de las descripciones de los productos
 embeddings = model.encode(df_products["input_text"], convert_to_tensor=True, show_progress_bar=True)
+embeddings_np = embeddings.cpu().numpy()
 
-# 🔹 Obtener la matriz de similitud entre los embeddings de las descripciones de los productos.
-similarities = get_similarities(embeddings)
+# 🔹 Crear y entrenar el índice FAISS
+dimension = embeddings_np.shape[1]  # dimensión de los embeddings
+index = faiss.IndexFlatL2(dimension)  # índice L2 (distancia euclidiana)
+index.add(embeddings_np)  # agregar los embeddings al índice
 
-# 🔹 Obtener las recomendaciones para un producto basadas en similitud de coseno usando la matriz de similitudes precalculada.
-def get_recommendations(product_id, n_recommendations=5, similarity_matrix=similarities):
+def get_recommendations(product_id, n_recommendations=3):
     """
-    Obtiene recomendaciones para un producto basadas en similitud de coseno usando la matriz de similitudes precalculada.
+    Obtiene recomendaciones para un producto usando FAISS.
     """
-    # Obtener el índice del producto
     try:
-      product_idx = df_products[df_products['productId'] == product_id].index[0]
-  
-      print(f"Recomendaciones para el producto: {df_products.iloc[product_idx]['productName']}")
-      # Obtener las similitudes del producto en la matriz precalculada
-      similarities = similarity_matrix[product_idx]
-      # Obtener los índices de los productos más similares (excluyendo el producto actual)
-      similar_indices = np.argsort(similarities)[::-1][1:n_recommendations+1]
-      print(f"🔹 Índices de los productos más similares: {similar_indices}")
-      # Obtener los productos recomendados
-      scores = similarities[similar_indices].tolist()
-      recommendations = df_products.iloc[similar_indices]['productId'].tolist()
-      print(f"🔹 Recomendaciones: {recommendations}")
-      print(f"🔹 Puntuaciones: {scores}")
-      return recommendations, scores
+        # Obtener el índice del producto
+        product_idx = df_products[df_products['productId'] == product_id].index[0]
+        
+        print(f"Recomendaciones para el producto: {df_products.iloc[product_idx]['productName']}")
+        
+        # Buscar los vecinos más cercanos
+        query_vector = embeddings_np[product_idx].reshape(1, -1)
+        distances, indices = index.search(query_vector, n_recommendations + 1)  # +1 porque el primer resultado es el mismo producto
+        
+        # Convertir distancias a similitudes (1 / (1 + distancia))
+        similarities = 1 / (1 + distances[0][1:])  # excluimos el primer resultado
+        
+        # Obtener los productos recomendados
+        recommendations = df_products.iloc[indices[0][1:]]['productId'].tolist()
+        
+        print(f"🔹 Recomendaciones: {recommendations}")
+        print(f"🔹 Puntuaciones: {similarities.tolist()}")
+        return recommendations, similarities.tolist()
     except IndexError as e:
-      print("No existe el producto con Id = ", product_id)
-      raise ValueError(f"No existe el producto con Id = {product_id}")
+        print("No existe el producto con Id = ", product_id)
+        raise ValueError(f"No existe el producto con Id = {product_id}")
 
-
+def get_recommendations_by_query(query: str, n_recommendations=5):
+    """
+    Obtener recomendaciones de productos basadas en una consulta de texto usando FAISS.
+    """
+    print(f"Buscando productos similares a: {query}")
+    
+    # Obtener el embedding de la consulta
+    query_embedding = model.encode(query, convert_to_tensor=True).cpu().numpy()
+    
+    # Buscar los vecinos más cercanos
+    distances, indices = index.search(query_embedding.reshape(1, -1), n_recommendations)
+    
+    # Convertir distancias a similitudes
+    similarities = 1 / (1 + distances[0])
+    
+    # Obtener los productos recomendados
+    recommendations = df_products.iloc[indices[0]]['productId'].tolist()
+    
+    print(f"🔹 Recomendaciones: {recommendations}")
+    print(f"🔹 Puntuaciones: {similarities.tolist()}")
+    return recommendations, similarities.tolist()
 
 def plot_embeddings(embeddings):
     # Reducimos a 2D
