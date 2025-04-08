@@ -59,7 +59,7 @@ def get_products():
     engine = None
     try:
         engine = connect_to_database()
-        query = "SELECT * FROM Product"
+        query = "SELECT * FROM Product WHERE isDeleted = 0"
         products_df = pd.read_sql(query, engine)
         return products_df
     finally:

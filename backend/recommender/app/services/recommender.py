@@ -2,10 +2,22 @@ import pandas as pd
 import numpy as np
 import time
 import sys
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.preprocessing import MinMaxScaler
 from app.utils.db import get_products, get_categories, test_connection
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.manifold import TSNE
+import matplotlib.pyplot as plt
+
+
+
+# 🔹 Obtener la matriz de similitud entre los embeddings de las descripciones de los productos.
+def get_similarities(embeddings):
+    """
+    Computa la matriz de similitud entre los embeddings de las descripciones de los productos.
+    """
+    similarity_matrix = cosine_similarity(embeddings, embeddings)
+    return similarity_matrix
+
 
 # Intentar conexion a la base de datos
 def wait_for_db(max_retries=5, delay=5):
@@ -34,60 +46,70 @@ wait_for_db()
 # 🔹 Obtener los datos de los productos y categorías
 products_df = get_products()
 categories_df = get_categories()
+
+# 🔹 Unir los datos de los productos y categorías
 # 🔹 Unir los datos de los productos y categorías
 df_products = pd.merge(products_df, categories_df, left_on="category_id", right_on="id")[["id_x","description","price","name_x","id_y","name_y"]]
 df_products.rename(columns={"id_x":"productId", "name_x":"productName", "id_y":"categoryId", "name_y":"category"}, inplace=True)
+df_products["input_text"] = "Categoria: " + df_products["category"] + ". " + df_products["productName"] + ". " + df_products["description"]
 
-# 🔹 Limpiar los datos de los productos
-df_products["description"] = df_products["description"].str.replace(".", " ").replace(",", " ").replace(":", " ").replace(";", " ").replace("!", " ").replace("?", " ").replace("  ", " ")
-df_products["description"] = df_products["description"].str.lower()
-df_products["description"] = df_products["description"].str.replace("  ", " ")
 
-# 🔹 Crear la matriz de similitud de texto
-vectorizer = TfidfVectorizer(encoding="utf-8",stop_words="english")
-tfidf_matrix = vectorizer.fit_transform(df_products["description"])
+# 🔹 Cargar el modelo de embeddings
+model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
 
-# 🔹 Calcular la similitud de texto
-text_similarity = cosine_similarity(tfidf_matrix, tfidf_matrix)
+# 🔹 Obtener los embeddings de las descripciones de los productos
+embeddings = model.encode(df_products["input_text"], convert_to_tensor=True, show_progress_bar=True)
 
-# 🔹 Normalizar el precio
-sclaer = MinMaxScaler() 
-df_products_copy = df_products.copy()
-df_products_copy["price_norm"] = sclaer.fit_transform(df_products_copy[["price"]])
+# 🔹 Obtener la matriz de similitud entre los embeddings de las descripciones de los productos.
+similarities = get_similarities(embeddings)
 
-price_similarity = 1 - np.abs(df_products_copy["price_norm"].values[:].reshape(-1,1) - df_products_copy["price_norm"].values)
-
-# 🔹 Calcular la similitud de productos
-product_similarity = (0.6*text_similarity) + (0.2*price_similarity)
-
-# 🔹 Obtener los ids de las categorías
-category_ids = df_products['categoryId'].values
-
-# 🔹 Crear una máscara de categorías para identificar los productos en la misma categoría
-category_mask = (category_ids[:, None] == category_ids)  # Matriz booleana (n x n)
-
-# 🔹 Aplicamos el boost solo en las posiciones correspondientes a productos de la misma categoría
-boosted_similarity_matrix = product_similarity + 0.2 * category_mask
-
-# 🔹 Establecemos que la diagonal (similitud consigo mismo) no tenga boost
-np.fill_diagonal(boosted_similarity_matrix, 0)
-
-# 🔹 Función para obtener las recomendaciones
-def recommend_products(product_id, n_recommendations=3) -> tuple[list[int], list[float]]:
-    # Verificar si el producto existe
-    if product_id not in df_products["productId"].values:
-        raise ValueError(f"Producto con ID {product_id} no encontrado")
+# 🔹 Obtener las recomendaciones para un producto basadas en similitud de coseno usando la matriz de similitudes precalculada.
+def get_recommendations(product_id, n_recommendations=5, similarity_matrix=similarities):
+    """
+    Obtiene recomendaciones para un producto basadas en similitud de coseno usando la matriz de similitudes precalculada.
+    """
+    # Obtener el índice del producto
     try:
-        # 🔹 Encuentra el índice del producto en el DataFrame
-        product_index = df_products[df_products["productId"] == product_id].index[0]
-        # Obtiene los indices de los productos con las similitudes ordenadas de forma descendente (mayor a menor)
-        similar_products = boosted_similarity_matrix[product_index].argsort()[::-1][:n_recommendations]
-        # Obtiene los ids de los productos 
-        similar_products_ids = df_products["productId"].iloc[similar_products]
-        # Obtengo los scores de similitud
-        similar_products_scores = boosted_similarity_matrix[product_index][similar_products]
-        
-        return similar_products_ids, similar_products_scores
-    except Exception as e:
-        print(f"Error al obtener las recomendaciones: {e}")
-        return None, None
+      product_idx = df_products[df_products['productId'] == product_id].index[0]
+  
+      print(f"Recomendaciones para el producto: {df_products.iloc[product_idx]['productName']}")
+      # Obtener las similitudes del producto en la matriz precalculada
+      similarities = similarity_matrix[product_idx]
+      # Obtener los índices de los productos más similares (excluyendo el producto actual)
+      similar_indices = np.argsort(similarities)[::-1][1:n_recommendations+1]
+      print(f"🔹 Índices de los productos más similares: {similar_indices}")
+      # Obtener los productos recomendados
+      scores = similarities[similar_indices].tolist()
+      recommendations = df_products.iloc[similar_indices]['productId'].tolist()
+      print(f"🔹 Recomendaciones: {recommendations}")
+      print(f"🔹 Puntuaciones: {scores}")
+      return recommendations, scores
+    except IndexError as e:
+      print("No existe el producto con Id = ", product_id)
+      raise ValueError(f"No existe el producto con Id = {product_id}")
+
+
+
+def plot_embeddings(embeddings):
+    # Reducimos a 2D
+    tsne = TSNE(n_components=2, perplexity=5, random_state=42)
+    embeddings_2d = tsne.fit_transform(embeddings.cpu().numpy())
+    # Graficamos
+    plt.figure(figsize=(8, 6))
+    plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], c='skyblue', s=100)
+
+    # Agregamos los nombres de los productos
+    for i, desc in enumerate(df_products['productName']):
+        plt.annotate(desc, (embeddings_2d[i, 0], embeddings_2d[i, 1]), fontsize=9)
+
+    plt.title('Visualización 2D de embeddings de productos')
+    plt.xlabel('Componente 1')
+    plt.ylabel('Componente 2')
+    plt.grid(True)
+    
+    # Guardamos la imagen en la carpeta actual
+    plt.savefig('embeddings_visualization.png', bbox_inches='tight')
+    plt.close()
+
+# Generamos y guardamos el plot al iniciar
+plot_embeddings(embeddings)

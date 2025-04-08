@@ -27,7 +27,8 @@ backend/crudo/*.sqlite
 backend/recommender/venv/
 backend/recommender/.env
 __pycache__/
-
+# Imagenes
+backend/recommender/embeddings_visualization.png
 
 
 # 🔹 General (Windows, Mac, Linux)
