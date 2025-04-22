@@ -8,7 +8,9 @@ from app.config import (
     DB_CONNECTION_STRING_RECOMMENDER,
     DB_SERVER,
     DB_DATABASE,
-    DB_DRIVER
+    DB_DRIVER,
+    DB_USER,
+    DB_PASSWORD
 )
 
 class DatabaseConnection:
@@ -31,7 +33,9 @@ class DatabaseConnection:
             conn_str = conn_str.format(
                 DB_SERVER=DB_SERVER,
                 DB_DATABASE=DB_DATABASE,
-                DB_DRIVER=urllib.parse.quote_plus(DB_DRIVER)
+                DB_DRIVER=urllib.parse.quote_plus(DB_DRIVER),
+                DB_USER=DB_USER,
+                DB_PASSWORD=DB_PASSWORD
             )
             
             self._engine = create_engine(conn_str)
