@@ -29,7 +29,9 @@ backend/recommender/.env
 __pycache__/
 # Imagenes
 backend/recommender/embeddings_visualization.png
-
+backend/recommender/sentiBert.pt
+*.pt
+*.pth
 
 # 🔹 General (Windows, Mac, Linux)
 *.DS_Store

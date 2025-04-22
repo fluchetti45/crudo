@@ -1,12 +1,31 @@
 import fastapi
-from app.models.models import  RecommendResponse
+from app.models.models import  RecommendResponse, SentimentResponse
 from app.services.recommender import  get_recommendations, get_recommendations_by_query
+from app.services.reviewer import get_sentiment
+from app.utils.db import wait_for_db
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
+
 
 
 app = fastapi.FastAPI()
 
+# Obtener la ruta absoluta al directorio static
+static_dir = os.path.join(os.path.dirname(__file__), "static")
 
+# Montar directorio estático
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
+# Ruta específica para favicon.ico
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return FileResponse(os.path.join(static_dir, "favicon.ico"))
+
+# 🔹 Esperar y verificar la conexión a la base de datos
+@app.on_event("startup")
+def startup_event():
+    wait_for_db()
 
 @app.get("/")
 def read_root():
@@ -48,3 +67,19 @@ async def recommend(product_id: int):
         print(f"Error desconocido: {e}")
         raise fastapi.HTTPException(status_code=500, detail="Internal Server Error")
 
+@app.get("/sentiment/{review_id}", response_model=SentimentResponse)
+async def sentiment(review_id: int):
+    try:
+        print(f"Obteniendo sentimiento del comentario: {review_id}")
+        sentiment = get_sentiment(review_id)
+        response = SentimentResponse(
+            probs=sentiment[0],
+            pred=sentiment[1]
+        )
+        return response
+    except ValueError as e:
+        print(e)
+        raise fastapi.HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        print(f"Error desconocido: {e}")
+        raise fastapi.HTTPException(status_code=500, detail="Internal Server Error")

@@ -82,11 +82,12 @@ public class CustomerReviewController : ControllerBase
     // PUT: api/CustomerReview/5
     [Authorize]
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateReview(int id, CustomerReview review)
+    public async Task<IActionResult> UpdateReview(int id, UpdateReviewDTO review)
     {
         try
         {
-            await _reviewService.UpdateReviewAsync(id, review);
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            await _reviewService.UpdateReviewAsync(id, userId, review);
             return NoContent();
         }
         catch (ArgumentException ex)

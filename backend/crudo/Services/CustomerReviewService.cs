@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using crudo.Models;
 using crudo.Interfaces;
 using crudo.DTOs.Product;
-
+using Newtonsoft.Json;
 namespace crudo.Services;
 
 public class CustomerReviewService : ICustomerReviewService
@@ -10,10 +10,16 @@ public class CustomerReviewService : ICustomerReviewService
     private readonly CrudoContext _context;
     private readonly ILogger<CustomerReviewService> _logger;
 
+    private readonly HttpClient _httpClient;
+
+    private readonly string _reviewerApiUrl;
+
     public CustomerReviewService(CrudoContext context, ILogger<CustomerReviewService> logger)
     {
         _context = context;
         _logger = logger;
+        _httpClient = new HttpClient();
+        _reviewerApiUrl = Environment.GetEnvironmentVariable("REVIEWER_API_URL");
     }
 
     public async Task<IEnumerable<CustomerReview>> GetAllReviewsAsync()
@@ -23,16 +29,42 @@ public class CustomerReviewService : ICustomerReviewService
 
     public async Task<GetReviewDTO?> GetReviewByIdAsync(int id)
     {
+        //
+        var response = await _httpClient.GetAsync($"{_reviewerApiUrl}/sentiment/{id}");
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
+        var content = await response.Content.ReadAsStringAsync();
+        var res = JsonConvert.DeserializeObject<SentimentResponseDTO>(content);
+        var probs = res.probs;
+        var pred = probs.IndexOf(probs.Max());
+        var sentiment = "";
+        switch (pred)
+        {
+            case 0:
+                sentiment = "Negativa";
+                break;
+            case 1:
+                sentiment = "Neutral";
+                break;
+            case 2:
+                sentiment = "Positiva";
+                break;
+        }
         return await _context.CustomerReviews
             .Where(r => r.Id == id)
             .Select(r => new GetReviewDTO
             {
+                Id = r.Id,
                 ProductId = r.ProductId,
                 Rating = r.Rating,
                 Comment = r.Comment,
                 CreatedAt = r.CreatedAt,
                 FilePathCover = r.Product.ProductImages.FirstOrDefault(i => i.IsCover == true)!.FilePath,
-                ProductName = r.Product.Name
+                ProductName = r.Product.Name,
+                Sentiment = sentiment,
+                probs = probs
             })
             .FirstOrDefaultAsync();
     }
@@ -119,7 +151,7 @@ public class CustomerReviewService : ICustomerReviewService
         return newReview;
     }
 
-    public async Task UpdateReviewAsync(int id, CustomerReview review)
+    public async Task UpdateReviewAsync(int id, string userId, UpdateReviewDTO review)
     {
         if (id != review.Id)
         {
@@ -133,7 +165,7 @@ public class CustomerReviewService : ICustomerReviewService
         }
 
         // Verificar que el usuario que actualiza es el mismo que creó la reseña
-        if (existingReview.UserId != review.UserId)
+        if (existingReview.UserId != userId)
         {
             throw new UnauthorizedAccessException("No tienes permiso para modificar esta reseña");
         }
@@ -230,6 +262,7 @@ public class CustomerReviewService : ICustomerReviewService
             .Include(r => r.Product)
             .Select(r => new GetReviewDTO
             {
+                Id = r.Id,
                 ProductId = r.ProductId,
                 Rating = r.Rating,
                 Comment = r.Comment,

@@ -11,7 +11,7 @@ public interface ICustomerReviewService
 
     Task<IEnumerable<GetReviewDTO>> GetReviewsByUserAsync(string userId);
     Task<CustomerReview> CreateReviewAsync(string userId, GenerateReviewDTO review);
-    Task UpdateReviewAsync(int id, CustomerReview review);
+    Task UpdateReviewAsync(int id, string userId, UpdateReviewDTO review);
     Task DeleteReviewAsync(int id);
     Task<bool> ReviewExistsAsync(int id);
     Task<IEnumerable<CustomerReview>> GetPendingReviewsAsync();

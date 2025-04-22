@@ -24,6 +24,7 @@ export class UiBlockReviewsComponent implements OnInit {
     });
     this._reviewService.getReviewsByUser().subscribe((reviews) => {
       this.reviews = reviews;
+      console.log(this.reviews);
     });
   }
 }

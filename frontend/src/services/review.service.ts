@@ -6,6 +6,7 @@ import { ProductForReview } from '../app/models/products/product.interface';
 import { CustomerReview } from '../app/models/reviews/customerReview.interface';
 import { GenerateReview } from '../app/models/reviews/generateReview.interface';
 import { ProductReviewSummary } from '../app/models/reviews/productReview.interface';
+import { UpdateReview } from '../app/models/reviews/updateReview.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -48,5 +49,13 @@ export class ReviewService {
     return this._http.get<ProductReviewSummary>(
       `${this._url}/product/${productId}`
     );
+  }
+
+  getReviewById(reviewId: string): Observable<CustomerReview> {
+    return this._http.get<CustomerReview>(`${this._url}/${reviewId}`);
+  }
+
+  updateReview(review: UpdateReview): Observable<CustomerReview> {
+    return this._http.put<CustomerReview>(`${this._url}/${review.id}`, review);
   }
 }

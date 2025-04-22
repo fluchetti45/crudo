@@ -21,7 +21,6 @@ import { NgClass, NgFor, NgIf } from '@angular/common';
 export class ReviewFormComponent implements OnInit {
   private _router = inject(ActivatedRoute);
   private _productId = this._router.snapshot.params['id'];
-
   private _review = inject(ReviewService);
   public product!: Product;
   private _product = inject(ProductService);

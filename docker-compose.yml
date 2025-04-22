@@ -54,6 +54,7 @@ services:
     ports:
       - "8000:8000"
     environment:
+      - ENVIRONMENT=${ENVIRONMENT}
       - DB_SERVER=db
       - DB_DATABASE=crudo
       - DB_USER=sa

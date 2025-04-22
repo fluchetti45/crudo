@@ -30,7 +30,7 @@ import { WishlistComponent } from '../components/wishlist/wishlist.component';
 import { UiBlockReviewsComponent } from '../components/ui-block-reviews/ui-block-reviews.component';
 import { ReviewFormComponent } from '../components/review-form/review-form.component';
 import { DashboardComponent } from '../components/dashboard/dashboard.component';
-
+import { EditReviewFormComponentComponent } from '../components/edit-review-form-component/edit-review-form-component.component';
 export const routes: Routes = [
   { path: '', component: HomePageComponent },
   { path: 'categories', component: UiBlockCategoriesComponent },
@@ -88,6 +88,11 @@ export const routes: Routes = [
   {
     path: 'profile/pending-review/:id',
     component: ReviewFormComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'profile/edit-review/:id',
+    component: EditReviewFormComponentComponent,
     canActivate: [AuthGuard],
   },
   {
